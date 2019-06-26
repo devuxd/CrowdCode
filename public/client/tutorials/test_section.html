@@ -1,0 +1,122 @@
+<step>
+    <div class="title">Create a test</div>
+    <div class="text">
+        <p style="width:500px">
+            To create a new unit test, click “Add a new test”.
+        </p>
+        <img src="/img/tutorial/testing/add.png"/>
+        <p style="width:500px">
+            You can write a brief description of the purpose of the unit test and select either an Input/Output test or
+            an Assertion test.
+        </p>
+        <img src="/img/tutorial/testing/test_prompt.png"/>
+    </div>
+</step>
+
+<step>
+    <div class="title">Input/Output tests</div>
+    <div class="text">
+        <p style="width:500px">
+            Input/output tests specify the desired behavior of the function providing an object definition for all the
+            inputs and for the output.
+        </p>
+        <img src="/img/tutorial/testing/input_output.png"/>
+    </div>
+</step>
+
+<step style="width:800px">
+    <div class="title">Assertion tests</div>
+    <div class="text">
+        <p>
+            Assertion tests afford more flexibility, letting you check only parts of the output (e.g., if an object has
+            a specific property), using function calls to check properties of the output (e.g., length of an array),
+            using complex expressions to construct input values, and even using multiple asserts.
+        </p>
+        <img src="/img/tutorial/testing/assertion.png" style="width: 700px; height: 180px"/>
+    </div>
+</step>
+
+<step style="width:500px">
+    <div class="title">Running and debugging tests</div>
+    <div class="text">
+        <p>
+            Click “Run” to run all of the function’s tests and view the list of passing and failing tests.
+        </p>
+        <img src="/img/tutorial/running/run.png"/>
+    </div>
+</step>
+<step style="width:600px">
+    <div class="title">Test details</div>
+    <div class="text">
+        <p>
+            Click on a listed test to see the test code and its result.
+        </p>
+        <img src="/img/tutorial/running/detail.png"/>
+    </div>
+</step>
+<step style="width:700px">
+    <div class="title">Inspecting the code</div>
+    <div class="text">
+        <p> Step 1: In "inspect mode", clicking on inspect code <img src="/img/tutorial/running/inspect_button.png"
+                                                                     width="300px"/>
+        </p>
+        <p>
+            Step 2: In the function editor where you can hover over expressions to see an expression value popup. After
+            editing the function, click “Run” and then again click “Inspect” to see the updated values.
+        </p>
+        <img src="/img/tutorial/running/inspector.png"/>
+    </div>
+</step>
+<step style="width:800px">
+    <div class="title">Stub a function call</div>
+    <div class="text">
+        <p>When you want to run your tests, it is possible some functions are not implemented yet or return wrong value,
+            You can use the stub feature
+            to replace the actual value with the intended output that
+            the implementation will eventually produce.</p>
+        <p>
+            Step 1: In "inspect mode", clicking on inspect code <img src="/img/tutorial/running/inspect_button.png"
+                                                                     width="300px"/></p>
+        <p> Step 2: Clicking on a function call opens a popup that allows to stub a function.
+        </p>
+
+        <img src="/img/tutorial/running/new_function_stub_1.png" width="700px" height="270px"/>
+        <p>
+            Step 3: In the expression value popup, click on “stub this function call” to automatically replace a
+            function call for a specific input with
+            a stub for an alternative specific output, and run the tests again with the stub for the invoked function.
+        </p>
+        <img src="/img/tutorial/running/new_function_stub_2.png" width="700px" height="270px"/>
+    </div>
+</step>
+<!--<step style="width:700px">-->
+<!--<div class="title">Stub a function call</div>-->
+<!--<div class="text">-->
+<!--<p>-->
+<!--While in "inspect mode", clicking on a function call opens a popup that allows to stub a function.-->
+<!--</p>-->
+<!--<img src="/img/tutorial/running/function_stub_1.png" />-->
+<!--<p>-->
+<!--If a function call is producing an incorrect output, the function should be stubbed. In the expression value popup, click on “stub this function call” to automatically replace a function call for a specific input with a stub for an alternative specific output, and creating a new test with the stub for the invoked function.-->
+<!--</p>-->
+<!--<img src="/img/tutorial/running/function_stub_2.png" />-->
+<!--</div>-->
+<!--</step>-->
+<step style="width:400px">
+    <div class="title">Reporting an issue</div>
+    <div class="text">
+        <p>
+            If a test itself is incorrect, click “Report an issue” in the test detail page to report the issue to be
+            addressed, temporarily disabling the test.
+        </p>
+
+        <img src="/img/tutorial/running/report.png"/>
+    </div>
+</step>
+
+<step on-hide="showProfileModal(); " style="width:375px">
+    <div class="title">Creating, running and debugging unit tests is completed!</div>
+    <div class="text">
+        You have completed Creating, running and debugging unit tests!
+    </div>
+</step>

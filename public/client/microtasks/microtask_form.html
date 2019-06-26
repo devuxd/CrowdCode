@@ -1,0 +1,75 @@
+<div
+        id="task"
+        class="task {{ !noMicrotask ? 'task-' + (microtask.type | lowercase) : '' }}"
+        ng-include="templatePath"
+>
+</div>
+
+<reminder></reminder>
+
+<div class="actions">
+    <div class="btn-group">
+
+        <button
+                type="button"
+                class="btn btn-link btn-sm"
+                data-placement="top"
+                data-container="body"
+                data-animation="am-fade-and-scale"
+                data-template="widgets/feedback.popover.html"
+                tabindex="101"
+                bs-popover>Send Us Feedback!
+        </button>
+        <button
+                ng-if="!breakMode && !noMicrotask"
+                type="button"
+                class="btn btn-link btn-sm"
+                data-placement="top"
+                data-container="body"
+                data-animation="am-fade-and-scale"
+                data-trigger="focus"
+                data-template="widgets/confused.popover.html"
+                tabindex="102"
+                bs-popover>
+            Confused?
+        </button>
+        <button
+                type="submit"
+                id="submitBtn"
+                class="btn btn-primary btn-md pull-right"
+                ng-if="!breakMode && !noMicrotask"
+                ng-click="submit()"
+                tabindex="99"
+                data-trigger="hover"
+                data-placement="top"
+                data-title="Submit the task and show the dashboard." bs-popover>
+            Submit
+        </button>
+        <button type="button"
+                id="skipBtn"
+                class="btn btn-default btn-sm pull-right"
+                ng-if="!breakMode && !noMicrotask"
+                ng-click="skip()"
+                tabindex="100"
+                data-trigger="hover"
+                data-placement="top"
+                data-title="Discard all your changes and show the dashboard" bs-popover>
+            Skip
+
+        </button>
+        <!--<label class="btn btn-sm pull-right" ng-if="!breakMode && !noMicrotask" id="breakBtn">
+            <input type="checkbox" ng-model="taskData.startBreak" tabindex="103" >
+            <span>{{currentPrompt()}}</span>
+           </label>-->
+
+        <button type="button"
+                class="btn btn-primary btn-md pull-right "
+                ng-if="breakMode "
+                ng-click="fetch()"
+                tabindex="100" data-trigger="hover"
+                data-placement="top"
+                data-title="Randomly fetch a microtask from server and assign to you" bs-popover>
+            Fetch a microtask
+        </button>
+    </div>
+</div>

@@ -1,0 +1,66 @@
+<label>Description</label>
+<p>
+    A worker reported an issue with the description of <strong ng-bind="data.functionName"></strong>. Can you review the reported issue?
+</p>
+
+
+<label>Reported issue</label>
+<p>
+    {{ data.reviewed.disputeText }}
+</p>
+
+<label>Code edits</label>
+<p>
+    <js-reader mode="diff" code="data.reviewed.newCode" old-code="data.reviewed.oldCode" ></js-reader>
+</p>
+
+
+<label>Reported tests</label>
+<p>
+    <div class="tests-list" bs-collapse ng-model="data.reviewed.openedTests" data-allow-multiple="true">
+        <div ng-repeat="t in data.reviewed.disputedTests">
+            <div class="test-item clickable" bs-collapse-toggle>
+                <strong>{{t.description}}</strong>
+            </div>
+            <div bs-collapse-target style="padding:5px">
+                <div class="form-group">
+					<label for="disputetext">Report description </label>
+					<div class="form-control form-control-static" name="disputetext">
+						{{ t.disputeText }}
+					</div>
+				</div>
+                <div ng-if="t.isSimple">
+                    <div class="form-group"  ng-repeat="(pIdx,p) in data.reviewed.functionParameters track by p.name">
+                        <label for="inputs">
+                            Input: {{p.name + ' {' + p.type + '}' }}
+                        </label>
+
+                        <div
+                            class="form-control code"
+                            json-reader
+                            name="{{p.name}}"
+                            ng-model="t.inputs[pIdx]">
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="t.isSimple">
+                        <label for="code">Output {{ '{' + funct.returnType + '}'}}</label>
+                        <div
+                            class="form-control code"
+                            json-reader
+                            ng-model="t.output"
+                            name="output">
+                        </div>
+                    </div>
+                </div>
+                <div ng-if="!t.isSimple">
+
+                    <div class="form-group">
+                        <label for="code">Code</label>
+                        <div class="form-control form-control-static" js-reader code="t.code"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <strong ng-if="data.isComplete">the test suite is marked as complete</strong>
+</p>

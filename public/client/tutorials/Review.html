@@ -1,0 +1,65 @@
+<step style=" max-width:800px; max-height: 800px">
+	<div class="title">Review </div>
+	<div class="text">
+		<p>In Review Work, your goal is to assess work submitted by the crowd.You should read function codes and test, after that accept or reject the implementation</p>
+		<img src="/img/tutorial/review/microtask.png" style=" max-width:700px; max-height: 700px"/>
+	</div>
+</step>
+<step style="width: 600px; max-height: 800px">
+	<div class="title">review tasks (reviewing code of the other programmer)
+	</div>
+	<div class="text">
+		<p><strong> Step 1: </strong> review implementation of the behavior which is written by other programmer. + sign shows these lines are added. - sign shows these lines are deleted from the code.</p>
+            <img src="/img/review-step1.png" style="max-height: 200px;width: 400px"/>
+
+		<p><strong> Step 2: </strong> review tests of this behavior</p>
+            <img src="/img/review-step2.png" style="max-height: 200px;width: 350px"/>
+
+		<p><strong> Step 3: </strong> rate the contribution and give a feedback to the development</p>
+        <img src="/img/tutorial/review/rejected.png" style="max-height: 100px;width: 400px"/>
+        <!--<img src="/img/review-step3.png" style="max-height: 100px;width: 400px"/>-->
+		<p><strong> Step 4: </strong> once you’re finished, click “Submit” button</p>
+        <img src="/img/SubmitButton.png" style="max-height: 80px;max-width: 100px"/>
+
+	</div>
+</step>
+<step style="width:800px;">
+	<div class="text">
+		<p >If you rate work with <strong>1 to 3 stars</strong>, the work will be marked as needing revision.
+			In this case, you must describe aspects of the work that you feel must be improved.
+		</p>
+		<img src="/img/tutorial/review/rejected.png" />
+
+	</div>
+</step>
+<step style="width:800px">
+	<div class="text">
+		<p>
+			If you feel that the work as submitted is already of high quality, you should rate it with <strong>4 or 5 stars</strong>.
+			In this case, the work will be accepted as is. You can also (optionally) include a message describing your assessment of the work,
+			which will be provided back to the crowd worker that did the work.
+		</p>
+		<img src="/img/tutorial/review/accepted.png" />
+	</div>
+</step>
+
+<step style="width:800px">
+    <div class="title">Last not least
+    </div>
+    <div class="text">
+        <p >
+            You should be aware only one behavior is implemented by other programmer, while you assess the implementation just consider the behavior that the code implemented.
+            In the function description(in the comments above the function) there is a lot of behaviors are written, but one of them is implemented. for example: in the below screenshot function has
+            behaviors like 1) it update status of a todo 2) it return false if it can not find the todo. 3)it should call 3rd party api for interacting with database
+            4) it throw an exception if arguments be invalid
+            <strong style="color: red">But, you should evaluate just one of these behaviors which is implemented, NOT ALL BEHAVIORS</strong>
+        </p>
+        <img src="/img/tutorial/choose_behave.png" style="max-height: 5cm;;max-width: 20cm"/>
+    </div>
+</step>
+
+<step on-hide="showProfileModal(); " style="width:475px">
+	<div class="title">Reviewing implemented function is completed!</div>
+	<div class="text">You have completed Reviewing implemented function! The next tutorial is <strong>testing</strong>.
+	</div>
+</step>

@@ -1,0 +1,21 @@
+<div id="leaderboardPanel">
+	<div>
+		<ul class="sidebar-list leaderboard" >
+		  	<li ng-repeat="leader in leaders | orderBy:'-score'" ng-if="leaders.length > 0" 
+		  	  class="{{ leaders.$keyAt(leader) == workerId ? 'self' : '' }}" >
+		  		<div class="avatar" ><img style="width:25px" ng-src="{{ avatar(leaders.$keyAt(leader)).$value }}" alt="{{ ::leader.name }}" /></div>
+		  		<div class="score">{{ leader.score }} pts</div>
+		  		<div class="name" >{{::(leader.name) }}</div>
+		  		<!--<div class="name" style="cursor:pointer" ng-click="clicked(leader)">{{::(leader.name) }}</div>-->
+		  		<div class="clearfix"></div>
+		  	</li>
+		</ul>
+		<span ng-if="leaders.length == 0" >
+			no leaders yet!
+		</span>
+	</div>
+</div>
+
+
+
+

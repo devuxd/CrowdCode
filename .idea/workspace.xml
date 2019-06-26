@@ -1,0 +1,1503 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="5304ebeb-4f9d-4bfe-855d-9fe2f89cf93f" name="Default" comment="cf">
+      <change beforePath="$PROJECT_DIR$/.idea/CrowdCode.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/CrowdCode.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <ignored path="$PROJECT_DIR$/.tmp/" />
+    <ignored path="$PROJECT_DIR$/temp/" />
+    <ignored path="$PROJECT_DIR$/tmp/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FUSProjectUsageTrigger">
+    <session id="1692500499">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="19" />
+          <entry key="project.open.time.1" value="1" />
+          <entry key="project.open.time.12" value="1" />
+          <entry key="project.open.time.4" value="2" />
+          <entry key="project.open.time.5" value="4" />
+          <entry key="project.open.time.6" value="6" />
+          <entry key="project.open.time.7" value="4" />
+          <entry key="project.open.time.8" value="2" />
+          <entry key="project.opened" value="20" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="dummy" value="1" />
+          <entry key="html" value="2678" />
+          <entry key="js" value="2910" />
+          <entry key="txt" value="844" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="HTML" value="2678" />
+          <entry key="JavaScript" value="2910" />
+          <entry key="PLAIN_TEXT" value="845" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="1479" value="1" />
+          <entry key="566" value="1" />
+          <entry key="600" value="1" />
+          <entry key="672" value="1" />
+          <entry key="Procfile" value="1" />
+          <entry key="bak" value="1" />
+          <entry key="css" value="1" />
+          <entry key="ejs" value="3" />
+          <entry key="es6" value="1" />
+          <entry key="html" value="54" />
+          <entry key="js" value="94" />
+          <entry key="json" value="7" />
+          <entry key="jsp" value="8" />
+          <entry key="png" value="15" />
+          <entry key="psd" value="4" />
+          <entry key="ts" value="4" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="CSS" value="1" />
+          <entry key="EJS" value="3" />
+          <entry key="HTML" value="52" />
+          <entry key="Image" value="19" />
+          <entry key="JSON" value="7" />
+          <entry key="JSP" value="8" />
+          <entry key="JavaScript" value="98" />
+          <entry key="PLAIN_TEXT" value="2" />
+          <entry key="Scratch" value="3" />
+          <entry key="TypeScript" value="4" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.js.language.service.starts">
+        <counts>
+          <entry key="TypeScriptServerServiceImpl" value="2" />
+        </counts>
+      </usages-collector>
+    </session>
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="CrowdCode" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/img/CM_demo.png">
+          <provider selected="true" editor-type-id="images" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/util/firebase_service.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="204">
+              <caret line="1897" column="4" selection-start-line="1897" selection-start-column="4" selection-end-line="1897" selection-end-column="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/util/microtask_service.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="662">
+              <caret line="794" column="35" selection-start-line="794" selection-start-column="35" selection-end-line="794" selection-end-column="35" />
+              <folding>
+                <element signature="e#5453#6691#0" />
+                <element signature="e#6898#8178#0" />
+                <element signature="e#8357#13438#0" />
+                <element signature="e#13654#18247#0" />
+                <element signature="e#18417#18540#0" />
+                <element signature="e#18703#23544#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>/logout</find>
+      <find>run</find>
+      <find>loge</find>
+      <find>authenticate</find>
+      <find>FirebaseService</find>
+      <find>'ref:</find>
+      <find>workerHandle</find>
+      <find>AdminFirebase</find>
+      <find>ServerValue.TIMESTAMP</find>
+      <find>servert</find>
+      <find>logeve</find>
+      <find>firebase</find>
+      <find>timestam</find>
+      <find>reviewM</find>
+      <find>submit</find>
+      <find>submi</find>
+      <find>fetch</find>
+      <find>Implementation Submitted</find>
+      <find>ajax/enqueue</find>
+      <find>deferred</find>
+      <find>500</find>
+      <find>result</find>
+      <find>function_object_previous_version</find>
+      <find>function_object</find>
+      <find>microtask_object</find>
+      <find>microtaskKey</find>
+      <find>mplementation_object.code</find>
+      <find>reference_id</find>
+      <find>sub</find>
+      <find>skipM</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>objTemp[i].id</replace>
+      <replace>todo.id</replace>
+      <replace>deploymentInfo</replace>
+    </replaceStrings>
+    <dirStrings>
+      <dir>$PROJECT_DIR$/public/video</dir>
+      <dir>$PROJECT_DIR$/public/client/questions</dir>
+      <dir>$PROJECT_DIR$</dir>
+      <dir>$PROJECT_DIR$/public</dir>
+    </dirStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/public/include/bootstrap/css/bootstrap.css" />
+        <option value="$PROJECT_DIR$/public/client/widgets/test_editor_help.html" />
+        <option value="$PROJECT_DIR$/public/client/client.jsp" />
+        <option value="$PROJECT_DIR$/public/client/microtasks/microtask_form.html" />
+        <option value="$PROJECT_DIR$/public/client/microtasks/microtaskForm.directive.js" />
+        <option value="$PROJECT_DIR$/public/client/microtasks/describe_behavior/describeBehavior.js" />
+        <option value="$PROJECT_DIR$/public/admin/dashboard/dashboard.js" />
+        <option value="$PROJECT_DIR$/public/client/tutorials/tutorialManager.js" />
+        <option value="$PROJECT_DIR$/public/client/test_runner/testvalidator-worker.js" />
+        <option value="$PROJECT_DIR$/public/client/test_runner/debugger.js" />
+        <option value="$PROJECT_DIR$/public/client/tutorials/review_describe.html" />
+        <option value="$PROJECT_DIR$/public/client/ui_elements/nav_user_menu_template.html" />
+        <option value="$PROJECT_DIR$/public/client/widgets/project_outline.template.html" />
+        <option value="$PROJECT_DIR$/public/client/microtasks/dashboard/dashboard2.html" />
+        <option value="$PROJECT_DIR$/public/client/microtasks/review/review_describe.html" />
+        <option value="$PROJECT_DIR$/public/client/tutorials/assertion_tests.html" />
+        <option value="$PROJECT_DIR$/public/client/tutorials/introduction_tutorial.html" />
+        <option value="$PROJECT_DIR$/public/client/client.js" />
+        <option value="$PROJECT_DIR$/public/client/ui_elements/nav_bar_template.html" />
+        <option value="$PROJECT_DIR$/public/client/ui_elements/projectStats.directive.js" />
+        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/public/client/widgets/reminder.directive.js" />
+        <option value="$PROJECT_DIR$/public/client/tutorials/main.html" />
+        <option value="$PROJECT_DIR$/public/client/tutorials/Review.html" />
+        <option value="$PROJECT_DIR$/public/client/tutorials/function_editor.html" />
+        <option value="$PROJECT_DIR$/public/client/tutorials/ImplementBehavior.html" />
+        <option value="$PROJECT_DIR$/public/client/tutorials/test_section.html" />
+        <option value="$PROJECT_DIR$/public/client/tutorials/running_tests.html" />
+        <option value="$PROJECT_DIR$/public/client/client.css" />
+        <option value="$PROJECT_DIR$/public/client/tutorials/new_funciton_stub_function.html" />
+        <option value="$PROJECT_DIR$/Datatest.js" />
+        <option value="$PROJECT_DIR$/public/client/microtasks/microtasks.service.js" />
+        <option value="$PROJECT_DIR$/public/client/tutorials/test_editor_help.html" />
+        <option value="$PROJECT_DIR$/edit.js" />
+        <option value="$PROJECT_DIR$/public/client/microtasks/describe_behavior/describe_behavior.html" />
+        <option value="$PROJECT_DIR$/public/client/microtasks/review/review.js" />
+        <option value="$PROJECT_DIR$/public/client/functions/functionUtils.factory.js" />
+        <option value="$PROJECT_DIR$/public/client/functions/javascriptTutorial.directive.js" />
+        <option value="$PROJECT_DIR$/config/config.json" />
+        <option value="$PROJECT_DIR$/lib/express-generator/bin/express-cli.js" />
+        <option value="$PROJECT_DIR$/public/clientReq/controller.js" />
+        <option value="$PROJECT_DIR$/public/clientReq/client_request.html" />
+        <option value="$PROJECT_DIR$/util/deployment_service.js" />
+        <option value="$PROJECT_DIR$/routes/app-routing.js" />
+        <option value="$PROJECT_DIR$/public/client/users/user.service.js" />
+        <option value="$PROJECT_DIR$/lib/microtask_service.js" />
+        <option value="$PROJECT_DIR$/public/loggedin.html" />
+        <option value="$PROJECT_DIR$/public/welcome.html" />
+        <option value="$PROJECT_DIR$/app.js" />
+        <option value="$PROJECT_DIR$/util/firebase_service.js" />
+        <option value="$PROJECT_DIR$/util/microtask_service.js" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER">
+    <gruntfile path="$PROJECT_DIR$/public/client/Gruntfile.js">
+      <alias-task name="build" info="Alias for &quot;html2js&quot;, &quot;concat&quot;, &quot;replace:scripts&quot;, &quot;replace:jsp&quot;, &quot;replace:testRunner&quot;, &quot;copy&quot; tasks." file-path="$PROJECT_DIR$/public/client/Gruntfile.js">
+        <dependency value="html2js" />
+        <dependency value="concat" />
+        <dependency value="replace:scripts" />
+        <dependency value="replace:jsp" />
+        <dependency value="replace:testRunner" />
+        <dependency value="copy" />
+      </alias-task>
+      <core-task name="jshint" info="Validate files with JSHint." file-path="$PROJECT_DIR$/public/node_modules/grunt-contrib-jshint/tasks/jshint.js" multi="true" />
+      <core-task name="concat" info="Concatenate files." file-path="$PROJECT_DIR$/public/node_modules/grunt-contrib-concat/tasks/concat.js" multi="true">
+        <target value="generated" />
+      </core-task>
+      <core-task name="watch" info="Run predefined tasks whenever watched files change." file-path="$PROJECT_DIR$/public/node_modules/grunt-contrib-watch/tasks/watch.js" multi="false">
+        <target value="scripts" />
+      </core-task>
+      <core-task name="html2js" info="Compiles Angular-JS templates to JavaScript." file-path="$PROJECT_DIR$/public/node_modules/grunt-html2js/tasks/html2js.js" multi="true">
+        <target value="main" />
+      </core-task>
+      <core-task name="copy" info="Copy files." file-path="$PROJECT_DIR$/public/node_modules/grunt-contrib-copy/tasks/copy.js" multi="true">
+        <target value="main" />
+      </core-task>
+      <core-task name="replace" info="General purpose text replacement for grunt. Allows you to replace text in files using strings, regexs or functions." file-path="$PROJECT_DIR$/public/node_modules/grunt-text-replace/tasks/text-replace.js" multi="true">
+        <target value="scripts" />
+        <target value="jsp" />
+        <target value="testRunner" />
+      </core-task>
+    </gruntfile>
+    <gruntfile path="$PROJECT_DIR$/public/admin/Gruntfile.js">
+      <alias-task name="build" info="Alias for &quot;html2js&quot;, &quot;concat&quot;, &quot;replace:scripts&quot;, &quot;replace:jsp&quot;, &quot;copy&quot; tasks." file-path="$PROJECT_DIR$/public/admin/Gruntfile.js">
+        <dependency value="html2js" />
+        <dependency value="concat" />
+        <dependency value="replace:scripts" />
+        <dependency value="replace:jsp" />
+        <dependency value="copy" />
+      </alias-task>
+      <core-task name="jshint" info="Validate files with JSHint." file-path="$PROJECT_DIR$/public/node_modules/grunt-contrib-jshint/tasks/jshint.js" multi="true" />
+      <core-task name="concat" info="Concatenate files." file-path="$PROJECT_DIR$/public/node_modules/grunt-contrib-concat/tasks/concat.js" multi="true">
+        <target value="generated" />
+      </core-task>
+      <core-task name="watch" info="Run predefined tasks whenever watched files change." file-path="$PROJECT_DIR$/public/node_modules/grunt-contrib-watch/tasks/watch.js" multi="false">
+        <target value="scripts" />
+      </core-task>
+      <core-task name="html2js" info="Compiles Angular-JS templates to JavaScript." file-path="$PROJECT_DIR$/public/node_modules/grunt-html2js/tasks/html2js.js" multi="true">
+        <target value="main" />
+      </core-task>
+      <core-task name="copy" info="Copy files." file-path="$PROJECT_DIR$/public/node_modules/grunt-contrib-copy/tasks/copy.js" multi="true">
+        <target value="main" />
+      </core-task>
+      <core-task name="replace" info="General purpose text replacement for grunt. Allows you to replace text in files using strings, regexs or functions." file-path="$PROJECT_DIR$/public/node_modules/grunt-text-replace/tasks/text-replace.js" multi="true">
+        <target value="scripts" />
+        <target value="jsp" />
+      </core-task>
+    </gruntfile>
+  </component>
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
+  </component>
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="NodeModulesDirectoryManager">
+    <handled-path value="$PROJECT_DIR$/lib/express-generator/node_modules" />
+    <handled-path value="$PROJECT_DIR$/node_modules" />
+    <handled-path value="$PROJECT_DIR$/public/node_modules" />
+  </component>
+  <component name="NodePackageJsonFileManager">
+    <packageJsonPaths>
+      <path value="$PROJECT_DIR$/lib/express-generator/package.json" />
+      <path value="$PROJECT_DIR$/package.json" />
+      <path value="$PROJECT_DIR$/public/include/JSONedit-gh-pages/bower_components/bootstrap/package.json" />
+      <path value="$PROJECT_DIR$/public/include/JSONedit-gh-pages/bower_components/jquery-ui/package.json" />
+      <path value="$PROJECT_DIR$/public/include/ace-editor/package.json" />
+      <path value="$PROJECT_DIR$/public/include/angular-file-upload/package.json" />
+      <path value="$PROJECT_DIR$/public/include/angular-hotkeys/package.json" />
+      <path value="$PROJECT_DIR$/public/include/angular-loading-bar/package.json" />
+      <path value="$PROJECT_DIR$/public/include/angular-messages/package.json" />
+      <path value="$PROJECT_DIR$/public/include/angular-strap/package.json" />
+      <path value="$PROJECT_DIR$/public/include/angular-toaster/package.json" />
+      <path value="$PROJECT_DIR$/public/include/angularjs-scroll-glue/package.json" />
+      <path value="$PROJECT_DIR$/public/include/bootstrap-additions/package.json" />
+      <path value="$PROJECT_DIR$/public/include/bootstrap-switch/package.json" />
+      <path value="$PROJECT_DIR$/public/include/bootstrap-toggle/package.json" />
+      <path value="$PROJECT_DIR$/public/include/jsdiff-master/package.json" />
+      <path value="$PROJECT_DIR$/public/include/ng-clip/package.json" />
+      <path value="$PROJECT_DIR$/public/include/simplediff/package.json" />
+      <path value="$PROJECT_DIR$/public/include/ui-ace-editor/package.json" />
+      <path value="$PROJECT_DIR$/public/include/ui-layout/package.json" />
+      <path value="$PROJECT_DIR$/public/include/zeroclipboard-2.2.0/package.json" />
+      <path value="$PROJECT_DIR$/public/package.json" />
+    </packageJsonPaths>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="y" value="23" />
+    <option name="width" value="1680" />
+    <option name="height" value="977" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <autoscrollToSource ProjectPane="true" />
+      <autoscrollFromSource ProjectPane="true" />
+      <foldersAlwaysOnTop value="false" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="config" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="admin" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="admin" type="462c0819:PsiDirectoryNode" />
+              <item name="users" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="adminDist" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="bower_components" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="bower_components" type="462c0819:PsiDirectoryNode" />
+              <item name="bower" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="bower_components" type="462c0819:PsiDirectoryNode" />
+              <item name="bower" type="462c0819:PsiDirectoryNode" />
+              <item name="Tests" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="bower_components" type="462c0819:PsiDirectoryNode" />
+              <item name="bower" type="462c0819:PsiDirectoryNode" />
+              <item name="Tests" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+              <item name="chat" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+              <item name="microtasks" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+              <item name="microtasks" type="462c0819:PsiDirectoryNode" />
+              <item name="describe_behavior" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+              <item name="tutorials" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+              <item name="users" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+              <item name="widgets" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="clientDist" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="clientReq" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="img" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="include" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="util" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
+              <item name="Scratches" type="d62648e6:ScratchProjectViewPane$MyRootNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="NBKnowledgePane" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="HbShouldOpenHtmlAsHb" value="" />
+    <property name="JavaScriptWeakerCompletionTypeGuess" value="true" />
+    <property name="SearchEverywhereHistoryKey" value="fire&#9;FILE&#9;file:///Users/emadaghayi/Dropbox/PhD_Materials/Third_Semester/devuxd_Lab/Workspace/CrowdCode/CrowdCode/util/firebase_service.js&#10;wag&#9;null&#9;null&#10;firebase_&#9;FILE&#9;file:///Users/emadaghayi/Dropbox/PhD_Materials/Third_Semester/devuxd_Lab/Workspace/CrowdCode/CrowdCode/util/firebase_service.js&#10;describeBehavior&#9;null&#9;null&#10;log&#9;FILE&#9;file:///Users/emadaghayi/Dropbox/PhD_Materials/Third_Semester/devuxd_Lab/Workspace/CrowdCode/CrowdCode/public/login.html&#10;firebase.&#9;FILE&#9;file:///Users/emadaghayi/Dropbox/PhD_Materials/Third_Semester/devuxd_Lab/Workspace/CrowdCode/CrowdCode/util/firebase_service.js" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="js.buildTools.grunt.grunt-cli.package" value="$PROJECT_DIR$/node_modules/grunt-cli" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="restartRequiresConfirmation" value="false" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/public/clientReq" />
+      <recent name="$PROJECT_DIR$/doc" />
+      <recent name="$PROJECT_DIR$/public/video" />
+      <recent name="$PROJECT_DIR$/public/img/tutorial/review" />
+      <recent name="$PROJECT_DIR$/public/img/tutorial" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/public/img/tutorial/review" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Node.js.Node Run">
+    <configuration name="questionsList.html" type="JavascriptDebugType" factoryName="JavaScript Debug" nameIsGenerated="true" uri="http://localhost:63342/CrowdCode/public/client/questions/questionsList.html">
+      <method v="2" />
+    </configuration>
+    <configuration name="Node Run" type="NodeJSConfigurationType" factoryName="Node.js" path-to-js-file="bin/www" working-dir="$PROJECT_DIR$">
+      <method v="2">
+        <option name="GruntBeforeRunTask" enabled="true">
+          <node-interpreter value="project" />
+          <gruntfile value="$PROJECT_DIR$/public/admin/Gruntfile.js" />
+          <tasks>
+            <task value="build" />
+          </tasks>
+          <envs />
+        </option>
+      </method>
+    </configuration>
+    <configuration default="true" type="NodeJSConfigurationType" factoryName="Node.js" path-to-js-file="bin/www" working-dir="$PROJECT_DIR$">
+      <method v="2">
+        <option name="GruntBeforeRunTask" enabled="true">
+          <node-interpreter value="project" />
+          <gruntfile value="$PROJECT_DIR$/public/admin/Gruntfile.js" />
+          <tasks>
+            <task value="build" />
+          </tasks>
+          <envs />
+        </option>
+      </method>
+    </configuration>
+    <configuration default="true" type="js.build_tools.grunt" factoryName="Grunt.js">
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="build (1)" type="js.build_tools.grunt" factoryName="Grunt.js" temporary="true">
+      <node-interpreter value="project" />
+      <gruntfile value="$PROJECT_DIR$/public/admin/Gruntfile.js" />
+      <tasks>
+        <task value="build" />
+      </tasks>
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="build" type="js.build_tools.grunt" factoryName="Grunt.js" temporary="true">
+      <node-interpreter value="project" />
+      <gruntfile value="$PROJECT_DIR$/public/client/Gruntfile.js" />
+      <tasks>
+        <task value="build" />
+      </tasks>
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="concat (1)" type="js.build_tools.grunt" factoryName="Grunt.js" temporary="true">
+      <node-interpreter value="project" />
+      <gruntfile value="$PROJECT_DIR$/public/admin/Gruntfile.js" />
+      <tasks>
+        <task value="concat" />
+      </tasks>
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="concat" type="js.build_tools.grunt" factoryName="Grunt.js" temporary="true">
+      <node-interpreter value="project" />
+      <gruntfile value="$PROJECT_DIR$/public/client/Gruntfile.js" />
+      <tasks>
+        <task value="concat" />
+      </tasks>
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="jshint" type="js.build_tools.grunt" factoryName="Grunt.js" temporary="true">
+      <node-interpreter value="project" />
+      <gruntfile value="$PROJECT_DIR$/public/client/Gruntfile.js" />
+      <tasks>
+        <task value="jshint" />
+      </tasks>
+      <envs />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="JavaScript Debug.questionsList.html" />
+      <item itemvalue="Node.js.Node Run" />
+      <item itemvalue="Grunt.js.build (1)" />
+      <item itemvalue="Grunt.js.build" />
+      <item itemvalue="Grunt.js.concat" />
+      <item itemvalue="Grunt.js.concat (1)" />
+      <item itemvalue="Grunt.js.jshint" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Grunt.js.build (1)" />
+        <item itemvalue="Grunt.js.build" />
+        <item itemvalue="Grunt.js.jshint" />
+        <item itemvalue="Grunt.js.concat (1)" />
+        <item itemvalue="Grunt.js.concat" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5304ebeb-4f9d-4bfe-855d-9fe2f89cf93f" name="Default" comment="" />
+      <created>1527880916728</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1527880916728</updated>
+      <workItem from="1527880918114" duration="4328000" />
+      <workItem from="1527888371032" duration="653000" />
+      <workItem from="1527891612901" duration="815000" />
+      <workItem from="1527892687500" duration="759000" />
+      <workItem from="1527966542468" duration="2883000" />
+      <workItem from="1527973369382" duration="3673000" />
+      <workItem from="1528139873747" duration="4409000" />
+      <workItem from="1528212798799" duration="1759000" />
+      <workItem from="1528420451245" duration="2669000" />
+      <workItem from="1528732582289" duration="3618000" />
+      <workItem from="1528771578415" duration="1501000" />
+      <workItem from="1528907862771" duration="4025000" />
+      <workItem from="1529167430798" duration="2472000" />
+      <workItem from="1529330805569" duration="1524000" />
+      <workItem from="1529514067416" duration="2407000" />
+      <workItem from="1529721142245" duration="2660000" />
+      <workItem from="1529801207432" duration="974000" />
+      <workItem from="1529936847791" duration="640000" />
+      <workItem from="1530117768044" duration="7143000" />
+      <workItem from="1530199221952" duration="7265000" />
+      <workItem from="1530221636949" duration="265000" />
+      <workItem from="1530291541960" duration="9257000" />
+      <workItem from="1530657120633" duration="460000" />
+      <workItem from="1531343700574" duration="4762000" />
+      <workItem from="1531407424941" duration="11841000" />
+      <workItem from="1531491735645" duration="19994000" />
+      <workItem from="1531525290689" duration="832000" />
+      <workItem from="1531676187965" duration="9359000" />
+      <workItem from="1531970396737" duration="1900000" />
+      <workItem from="1532015497613" duration="11454000" />
+      <workItem from="1532096634059" duration="12745000" />
+      <workItem from="1532395436056" duration="4258000" />
+      <workItem from="1532527526408" duration="24186000" />
+      <workItem from="1532617653748" duration="4026000" />
+      <workItem from="1532643622952" duration="3256000" />
+      <workItem from="1532702474627" duration="333000" />
+      <workItem from="1532909538100" duration="692000" />
+      <workItem from="1532968569034" duration="4363000" />
+      <workItem from="1533088500225" duration="2392000" />
+      <workItem from="1533147154871" duration="2980000" />
+      <workItem from="1533157962116" duration="354000" />
+      <workItem from="1533225868544" duration="7760000" />
+      <workItem from="1533305355453" duration="1787000" />
+      <workItem from="1533607318629" duration="539000" />
+      <workItem from="1533664207762" duration="2449000" />
+      <workItem from="1533738530265" duration="4594000" />
+      <workItem from="1533779942819" duration="4657000" />
+      <workItem from="1534135887306" duration="1776000" />
+      <workItem from="1534345907016" duration="1182000" />
+      <workItem from="1534527369210" duration="565000" />
+      <workItem from="1535381957215" duration="5233000" />
+      <workItem from="1535570036485" duration="752000" />
+      <workItem from="1536599793474" duration="3655000" />
+      <workItem from="1536689526966" duration="1314000" />
+      <workItem from="1536769432803" duration="354000" />
+      <workItem from="1537048613976" duration="4820000" />
+      <workItem from="1537073427290" duration="323000" />
+      <workItem from="1537074065307" duration="2970000" />
+      <workItem from="1537117540117" duration="493000" />
+      <workItem from="1537306719061" duration="338000" />
+      <workItem from="1537368485525" duration="1832000" />
+      <workItem from="1537542419156" duration="6000" />
+      <workItem from="1537971922840" duration="7086000" />
+      <workItem from="1538069685943" duration="901000" />
+      <workItem from="1538263228883" duration="6024000" />
+      <workItem from="1538407280515" duration="2467000" />
+      <workItem from="1538580193840" duration="125000" />
+      <workItem from="1539015792935" duration="697000" />
+      <workItem from="1539041658845" duration="1129000" />
+      <workItem from="1540234759241" duration="695000" />
+      <workItem from="1541381265782" duration="660000" />
+      <workItem from="1541457531618" duration="395000" />
+      <workItem from="1541530684792" duration="1795000" />
+      <workItem from="1542143804550" duration="667000" />
+      <workItem from="1542315189218" duration="496000" />
+      <workItem from="1542402032886" duration="3201000" />
+      <workItem from="1542472288657" duration="171000" />
+      <workItem from="1543538838927" duration="1900000" />
+      <workItem from="1543878173049" duration="811000" />
+      <workItem from="1544201070604" duration="72000" />
+      <workItem from="1544201148967" duration="318000" />
+      <workItem from="1544232466425" duration="795000" />
+      <workItem from="1544454354839" duration="449000" />
+      <workItem from="1544547637965" duration="494000" />
+      <workItem from="1544656934714" duration="544000" />
+      <workItem from="1544906873592" duration="560000" />
+      <workItem from="1546888975840" duration="511000" />
+      <workItem from="1547491629412" duration="208000" />
+      <workItem from="1548883679929" duration="1000" />
+      <workItem from="1552328593292" duration="560000" />
+      <workItem from="1552331232963" duration="418000" />
+      <workItem from="1553201467957" duration="605000" />
+      <workItem from="1554149491057" duration="536000" />
+      <workItem from="1554591376104" duration="5000" />
+      <workItem from="1554845989104" duration="482000" />
+      <workItem from="1555691063478" duration="6975000" />
+      <workItem from="1555938681356" duration="17528000" />
+      <workItem from="1555973826201" duration="490000" />
+      <workItem from="1556044416359" duration="36668000" />
+      <workItem from="1556202090054" duration="12102000" />
+      <workItem from="1556227480997" duration="7828000" />
+      <workItem from="1556291238145" duration="3144000" />
+      <workItem from="1556549371532" duration="12688000" />
+      <workItem from="1556567242750" duration="439000" />
+      <workItem from="1556719747720" duration="6519000" />
+      <workItem from="1556818579450" duration="3546000" />
+      <workItem from="1557290480498" duration="1217000" />
+      <workItem from="1557544890791" duration="738000" />
+      <workItem from="1557590259882" duration="2581000" />
+      <workItem from="1558540210619" duration="1197000" />
+      <workItem from="1558627093867" duration="15673000" />
+      <workItem from="1558714559278" duration="7240000" />
+      <workItem from="1558977662983" duration="6343000" />
+      <workItem from="1559068429335" duration="16961000" />
+      <workItem from="1559143646020" duration="2891000" />
+      <workItem from="1559146560741" duration="2023000" />
+      <workItem from="1559315996576" duration="16383000" />
+      <workItem from="1560743880123" duration="572000" />
+      <workItem from="1561569712373" duration="1234000" />
+      <workItem from="1561584377161" duration="891000" />
+    </task>
+    <task id="LOCAL-00001" summary="move folders from CrowdeCode to root. Heroku can not read files in sub folder. it expects to find package.json in root of the repo.">
+      <created>1527885411741</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1527885411741</updated>
+    </task>
+    <task id="LOCAL-00002" summary="move folders from CrowdeCode to root. Heroku can not read files in sub folder. it expects to find package.json in root of the repo.">
+      <created>1527892113128</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1527892113128</updated>
+    </task>
+    <task id="LOCAL-00003" summary="move folders from CrowdeCode to root. Heroku can not read files in sub folder. it expects to find package.json in root of the repo.">
+      <created>1527892122457</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1527892122457</updated>
+    </task>
+    <task id="LOCAL-00004" summary="move folders from CrowdeCode to root. Heroku can not read files in sub folder. it expects to find package.json in root of the repo.">
+      <created>1527892213983</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1527892213983</updated>
+    </task>
+    <task id="LOCAL-00005" summary="update gitignore. heroku needs to instal node madules by itself. it can read all dependencies from package.json">
+      <created>1527893033247</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1527893033247</updated>
+    </task>
+    <task id="LOCAL-00006" summary="stop auto-playing">
+      <created>1528432116107</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1528432116107</updated>
+    </task>
+    <task id="LOCAL-00007" summary="change welcome page">
+      <created>1544201262250</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1544201262250</updated>
+    </task>
+    <task id="LOCAL-00008" summary="change welcome page">
+      <created>1552329015674</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1552329015674</updated>
+    </task>
+    <task id="LOCAL-00009" summary="change welcome page">
+      <created>1552329039957</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1552329039957</updated>
+    </task>
+    <task id="LOCAL-00010" summary="change welcome page to AlignNumber">
+      <created>1555691187894</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1555691187894</updated>
+    </task>
+    <task id="LOCAL-00011" summary="add documents to the project">
+      <created>1555693848399</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1555693848399</updated>
+    </task>
+    <task id="LOCAL-00012" summary="change welcome page, add enter name of the project">
+      <created>1555716004135</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1555716004136</updated>
+    </task>
+    <task id="LOCAL-00013" summary="add deployment info to Client Request page">
+      <created>1555974075885</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1555974075885</updated>
+    </task>
+    <task id="LOCAL-00014" summary="modify deployment feature&#10;it reads gitHub credential from Firebase.">
+      <created>1556146349231</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1556146349231</updated>
+    </task>
+    <task id="LOCAL-00015" summary="update deployment module">
+      <created>1556158761562</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1556158761562</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Finalize the deployment subsystem">
+      <created>1556228090863</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1556228090863</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Correct the user GItHub">
+      <created>1556228610231</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1556228610231</updated>
+    </task>
+    <task id="LOCAL-00018" summary="remove a syntax error (async)">
+      <created>1556229764923</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1556229764923</updated>
+    </task>
+    <task id="LOCAL-00019" summary="remove required form client request">
+      <created>1556230330462</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1556230330462</updated>
+    </task>
+    <task id="LOCAL-00020" summary="fix minor bug in deploying">
+      <created>1556232642185</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1556232642185</updated>
+    </task>
+    <task id="LOCAL-00021" summary="add comment to code">
+      <created>1556291319732</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1556291319732</updated>
+    </task>
+    <task id="LOCAL-00022" summary="add email and firstname and last name for deploying">
+      <created>1556292660205</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1556292660205</updated>
+    </task>
+    <task id="LOCAL-00023" summary="add first and last name&#10;add email input">
+      <created>1556292699828</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1556292699828</updated>
+    </task>
+    <task id="LOCAL-00024" summary="add a line to the end of microservice file as a date">
+      <created>1556294045932</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1556294045932</updated>
+    </task>
+    <task id="LOCAL-00025" summary="update the deployment feature. a minor bog is fixed.">
+      <created>1556559969593</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1556559969593</updated>
+    </task>
+    <task id="LOCAL-00026" summary="cosmetic changes in client request">
+      <created>1556725234150</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1556725234150</updated>
+    </task>
+    <task id="LOCAL-00027" summary="avoid saving duplicate projects">
+      <created>1556820892254</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1556820892254</updated>
+    </task>
+    <task id="LOCAL-00028" summary="add template project">
+      <created>1557291233440</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1557291233441</updated>
+    </task>
+    <task id="LOCAL-00029" summary="disable checking isComplete for functions">
+      <created>1557592234998</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1557592234998</updated>
+    </task>
+    <task id="LOCAL-00030" summary="add logs to firebase for fetching, submitting Review and Implementation microtasks">
+      <created>1558982565345</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1558982565345</updated>
+    </task>
+    <task id="LOCAL-00031" summary="add log for landing to dashboard&#10;add log for logging successfully&#10;change timestamp to firebase.serverTime.timestamp">
+      <created>1559148565157</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1559148565157</updated>
+    </task>
+    <task id="LOCAL-00032" summary="fix bug in logs for review task">
+      <created>1559337939280</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1559337939280</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="453974000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="23" width="1680" height="977" extended-state="0" />
+    <editor active="true" />
+    <layout>
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.63805103" visible="true" weight="0.16757083" />
+      <window_info id="Structure" order="1" sideWeight="0.4912689" weight="0.25" />
+      <window_info id="Grunt " order="2" sideWeight="0.36194897" side_tool="true" visible="true" weight="0.16757083" />
+      <window_info id="Favorites" order="3" sideWeight="0.3538999" side_tool="true" weight="0.26066098" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info active="true" anchor="bottom" id="Find" order="1" visible="true" weight="0.21345708" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.36774942" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.32830626" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32945284" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.2895981" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Version Control" order="10" weight="0.2900232" />
+      <window_info anchor="bottom" id="Messages" order="11" />
+      <window_info anchor="bottom" id="Statistic" order="12" />
+      <window_info anchor="bottom" id="TypeScript" order="13" weight="0.32932693" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Notes" order="3" />
+    </layout>
+    <layout-to-restore>
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.64663464" visible="true" weight="0.17842074" />
+      <window_info id="Structure" order="1" sideWeight="0.4912689" weight="0.25" />
+      <window_info id="Grunt " order="2" sideWeight="0.3533654" side_tool="true" visible="true" weight="0.17842074" />
+      <window_info id="Favorites" order="3" sideWeight="0.3538999" side_tool="true" weight="0.26066098" />
+      <window_info anchor="bottom" id="TypeScript" order="0" weight="0.32932693" />
+      <window_info anchor="bottom" id="Message" order="1" />
+      <window_info active="true" anchor="bottom" id="Find" order="2" visible="true" weight="0.28846154" />
+      <window_info anchor="bottom" id="Run" order="3" weight="0.19591346" />
+      <window_info anchor="bottom" id="Debug" order="4" weight="0.26081732" />
+      <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="7" weight="0.32945284" />
+      <window_info anchor="bottom" id="Docker" order="8" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.2908654" />
+      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
+      <window_info anchor="bottom" id="Version Control" order="11" weight="0.32932693" />
+      <window_info anchor="bottom" id="Messages" order="12" />
+      <window_info anchor="bottom" id="Statistic" order="13" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Notes" order="3" />
+    </layout-to-restore>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ORDER">
+      <list>
+        <option value="0" />
+        <option value="2" />
+        <option value="3" />
+        <option value="1" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+              <option name="COLUMN_ORDER">
+                <list>
+                  <option value="0" />
+                  <option value="1" />
+                  <option value="2" />
+                  <option value="3" />
+                </list>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/services/todocomplement" />
+      <path value="$PROJECT_DIR$/services/deploy19" />
+      <path value="$PROJECT_DIR$/services/deploy138" />
+    </ignored-roots>
+    <MESSAGE value="stop auto-playing" />
+    <MESSAGE value="change welcome page" />
+    <MESSAGE value="change welcome page to AlignNumber" />
+    <MESSAGE value="add documents to the project" />
+    <MESSAGE value="change welcome page, add enter name of the project" />
+    <MESSAGE value="add deployment info to Client Request page" />
+    <MESSAGE value="modify deployment feature&#10;it reads gitHub credential from Firebase." />
+    <MESSAGE value="update deployment module" />
+    <MESSAGE value="Finalize the deployment subsystem" />
+    <MESSAGE value="Correct the user GItHub" />
+    <MESSAGE value="remove a syntax error (async)" />
+    <MESSAGE value="remove required form client request" />
+    <MESSAGE value="fix minor bug in deploying" />
+    <MESSAGE value="add comment to code" />
+    <MESSAGE value="add email and firstname and last name for deploying" />
+    <MESSAGE value="add first and last name&#10;add email input" />
+    <MESSAGE value="add a line to the end of microservice file as a date" />
+    <MESSAGE value="update the deployment feature. a minor bog is fixed." />
+    <MESSAGE value="cosmetic changes in client request" />
+    <MESSAGE value="avoid saving duplicate projects" />
+    <MESSAGE value="add template project" />
+    <MESSAGE value="disable checking isComplete for functions" />
+    <MESSAGE value="add logs to firebase for fetching, submitting Review and Implementation microtasks" />
+    <MESSAGE value="add log for landing to dashboard&#10;add log for logging successfully&#10;change timestamp to firebase.serverTime.timestamp" />
+    <MESSAGE value="fix bug in logs for review task" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix bug in logs for review task" />
+    <option name="PRESELECT_EXISTING_CHANGELIST" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/util/microtask_service.js</url>
+          <line>794</line>
+          <option name="timeStamp" value="91" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/util/firebase_service.js</url>
+          <line>1912</line>
+          <option name="timeStamp" value="93" />
+        </line-breakpoint>
+      </breakpoints>
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+    </breakpoint-manager>
+  </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="evaluateExpression">
+      <expression>
+        <expression-string>test_set.length</expression-string>
+        <language-id>JavaScript</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>Firebase</expression-string>
+        <language-id>JavaScript</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>AdminFirebase.database().</expression-string>
+        <language-id>JavaScript</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>AdminFirebase.database()</expression-string>
+        <language-id>JavaScript</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>AdminFirebase.database</expression-string>
+        <language-id>JavaScript</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>AdminFirebase.database.</expression-string>
+        <language-id>JavaScript</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>AdminFirebase.database.ServerValue</expression-string>
+        <language-id>JavaScript</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>AdminFirebase.firestore.constructor</expression-string>
+        <language-id>JavaScript</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>AdminFirebase.firestore</expression-string>
+        <language-id>JavaScript</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/public/userInfo.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="10" column="72" selection-start-line="10" selection-start-column="20" selection-end-line="10" selection-end-column="72" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/client/chat/chat.directive.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="91" selection-start-line="3" selection-start-column="91" selection-end-line="3" selection-end-column="91" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/client/widgets/reminder.directive.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="44" column="20" selection-start-line="44" selection-start-column="20" selection-end-line="44" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/admin/users/users.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="33" selection-start-line="6" selection-start-column="33" selection-end-line="6" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/nodeCrowdcodeApp.js.bak">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="46" selection-start-line="9" selection-start-column="46" selection-end-line="9" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/admin/admin.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-483">
+          <caret line="33" column="56" selection-start-line="33" selection-start-column="56" selection-end-line="33" selection-end-column="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/client/client.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="39" column="52" selection-start-line="39" selection-start-column="52" selection-end-line="39" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/clientReq/controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="605">
+          <caret line="282" column="19" selection-start-line="280" selection-start-column="18" selection-end-line="282" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/firebase/firebase.d.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="140">
+          <caret line="116" column="27" selection-start-line="116" selection-start-column="27" selection-end-line="116" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/client/client.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="8" selection-start-line="17" selection-start-column="8" selection-end-line="17" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/clientDist/client.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1508" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/clientDist/client.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1193" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/clientDist/client.ejs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="444">
+          <caret line="105" selection-start-line="105" selection-end-line="105" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/client/microtasks/describe_behavior/describeBehavior.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="84" selection-start-line="7" selection-start-column="81" selection-end-line="7" selection-end-column="84" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/client/microtasks/describe_behavior/describe_behavior.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3263" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/clientDist/client.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-6170" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/loggedin.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="302">
+          <caret line="27" column="12" lean-forward="true" selection-start-line="27" selection-start-column="12" selection-end-line="27" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/login.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="23" column="39" lean-forward="true" selection-start-line="23" selection-start-column="6" selection-end-line="23" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/adminDist/admin.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-5738">
+          <caret line="1" selection-start-line="1" selection-end-line="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/include/angularfire.min.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="11" column="62" selection-start-line="11" selection-start-column="62" selection-end-line="11" selection-end-column="62" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/data_handler.js">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sessions/44biY1F1CG4Q1d3pFe9PpcgI00bnvTPU.json" />
+    <entry file="file://$PROJECT_DIR$/lib/dependencies.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="31" column="76" selection-start-line="31" selection-start-column="63" selection-end-line="31" selection-end-column="76" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/userService.js">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/include/firebase.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3900">
+          <caret line="261" column="342" selection-start-line="261" selection-start-column="342" selection-end-line="261" selection-end-column="342" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/client/users/user.service.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="30" column="19" selection-start-line="30" selection-start-column="19" selection-end-line="30" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/deployment_service.js">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/clientDist/client.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="4655" column="61" selection-start-line="4655" selection-start-column="61" selection-end-line="4655" selection-end-column="61" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/client/microtasks/microtasks.service.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="183">
+          <caret line="32" column="61" selection-start-line="32" selection-start-column="61" selection-end-line="32" selection-end-column="61" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/api.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-123">
+          <caret line="13" column="24" selection-start-line="13" selection-start-column="24" selection-end-line="13" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/microtask_service.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="344">
+          <caret line="797" column="86" selection-start-line="797" selection-start-column="86" selection-end-line="797" selection-end-column="86" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="660">
+          <caret line="44" column="4" selection-start-line="44" selection-start-column="4" selection-end-line="44" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/welcome.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="342" column="15" selection-start-line="342" selection-start-column="15" selection-end-line="342" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.html">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_1.html">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/welcome_old.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="372">
+          <caret line="92" column="26" lean-forward="true" selection-start-line="92" selection-start-column="26" selection-end-line="92" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/img/welcome_first.psd">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/img/welcome_third.psd">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/img/copy.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/img/stars_sm.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/img/Behav-step1.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/img/Behave-step1-blur.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/img/welcome_implementation.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/img/welcome_review.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/img/welcome_second.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/img/welcome_second.psd">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/img/welcome_third.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/img/welcome_first.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/img/CM_demo.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/firebase_service.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="1897" column="4" selection-start-line="1897" selection-start-column="4" selection-end-line="1897" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/microtask_service.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="662">
+          <caret line="794" column="35" selection-start-line="794" selection-start-column="35" selection-end-line="794" selection-end-column="35" />
+          <folding>
+            <element signature="e#5453#6691#0" />
+            <element signature="e#6898#8178#0" />
+            <element signature="e#8357#13438#0" />
+            <element signature="e#13654#18247#0" />
+            <element signature="e#18417#18540#0" />
+            <element signature="e#18703#23544#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

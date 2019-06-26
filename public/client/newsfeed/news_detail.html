@@ -1,0 +1,44 @@
+<div class="top padding">
+    <a href="#" class="pull-left" ng-click="$parent.setUiView('list');">
+      <span class="glyphicon glyphicon-arrow-left"></span>
+      back
+    </a>
+    <span class="clearfix"></span>
+</div>
+<div class="middle padding">
+    <div class="task-{{ data.type | lowercase }}">
+
+
+        <!-- MICROTASK DATA -->
+        <div ng-include="'/client/newsfeed/news_detail_' + data.templateUrl + '.html'">
+        </div>
+
+        <!-- REVIEW SCORE -->
+        <label ng-if="!data.isReview">Received review</label>
+        <label ng-if="data.isReview">Given review</label>
+        <p>
+            <div>
+                <span ng-repeat="currentValue in [1,2,3,4,5] track by $index"
+                      class="rating-star {{ data.review.score >= currentValue ? 'full' : '' }}">
+                </span>
+                <span class="clearfix"></span><br />
+            </div>
+            <div>{{data.review.text}}</div>
+        </p>
+
+<!--
+        <a href="#" class="pull-right" ng-init="show=false" ng-show="!show && data.canBeChallenged" ng-click="show=true">challenge this review</a>
+        <span class="clearfix"></span>
+        <form name="challengeForm" novalidate ng-show="show" ng-submit="challengeForm.$valid && challengeReview()">
+            <div class="form-group">
+                <textarea required name="text" class="form-control" ng-model="challengeText" placeholder="Challenge text"></textarea>
+            </div>
+            <span class="btn-group pull-right">
+                <button type="button" class="btn btn-xs btn-default" ng-click="show = false">Cancel</button>
+                <button type="submit" class="btn btn-xs btn-primary">Challenge</button>
+            </span>
+
+            <div class="clearfix"></div>
+        </form>-->
+    </div>
+</div>
