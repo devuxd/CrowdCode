@@ -13,22 +13,23 @@
                 <div bs-collapse start-collapsed="false" allow-multiple="true">
                     <span class="section-header">Data Types:</span><br/>
                     <span>Arguments of the functions you want to implement</span>
-                    <div ng-repeat="d in DataTypes" class="data-types" ng-init="d.selectedExample = d.examples[0]" style="background-color: rgba(23,163,125,0.3);">
-                        <div bs-collapse-toggle class="toggler" >{{d.name}}</div>
+                    <div ng-repeat="d in DataTypes" class="data-types" ng-init="d.selectedExample = d.examples[0]"
+                         style="background-color: rgba(23,163,125,0.3);">
+                        <div bs-collapse-toggle class="toggler">{{d.name}}</div>
                         <div bs-collapse-target class="toggled" ng-init="structure = buildStructure(d)">
                             <span ng-bind="::d.description"></span>
                             <pre ng-if="d.structure" ng-bind="structure"></pre>
                             <div ng-if="d.selectedExample != undefined">
                                 <span class="pull-left" for="exampleSelect">EXAMPLES:</span>
                                 <span class="pull-right">
-                                    <div ng-if="::d.examples" class="dropdown"  >
-                                       <button name= "exampleSelect"
+                                    <div ng-if="::d.examples" class="dropdown">
+                                       <button name="exampleSelect"
                                                class="btn btn-xs dropdown-toggle"
                                                bs-select
                                                bs-options="e.name for e in d.examples"
                                                data-html="1"
                                                data-placement="bottom-right"
-                                               ng-model="d.selectedExample" >
+                                               ng-model="d.selectedExample">
                                        </button>
                                     </div>
                                 </span>
@@ -40,8 +41,9 @@
                     <br/>
                     <span class="section-header">Functions: </span><br/>
                     <span>Here’s a list of all functions in the system that are written by the crowd. When you fetch a microtask, the system will pick one of these functions for you to work on.</span>
-                    <div ng-repeat="f in Functions" ng-show="!f.isThirdPartyAPI"  class="functions" style="background-color: rgba(14, 54, 255, 0.3);">
-                        <div bs-collapse-toggle class="toggler" >{{f.name}}</div>
+                    <div ng-repeat="f in Functions" ng-show="!f.isThirdPartyAPI" class="functions"
+                         style="background-color: rgba(14, 54, 255, 0.3);">
+                        <div bs-collapse-toggle class="toggler">{{f.name}}</div>
                         <div bs-collapse-target class="toggled">
                             <div ng-bind="f.description"></div>
                             <div><strong> Parameters </strong></div>
@@ -49,7 +51,7 @@
                                 <span ng-bind="p.name"></span>
                                 <span ng-bind="p.type"></span>
                             </div>
-                            <div >
+                            <div>
                                 <strong>Return:</strong>
                                 <span ng-bind="f.returnType"></span>
                             </div>
@@ -58,16 +60,23 @@
                     <br/>
                     <span class="section-header">3rd Party persisting API</span><br/>
                     <span>These functions are library functions offered by the environment. You can call them from function implementations as well as from tests.</span>
-                    <div ng-repeat="f in Functions" ng-show="f.isThirdPartyAPI" class="functions" style="background-color: rgba(255, 248, 46, 0.82);">
-                        <div bs-collapse-toggle class="toggler" >{{f.name}}Implementation</div>
+                    <div ng-repeat="f in Functions" ng-show="f.isThirdPartyAPI" class="functions"
+                         style="background-color: rgba(255, 248, 46, 0.82);">
+                        <div bs-collapse-toggle class="toggler">{{f.name}}Implementation</div>
                         <div bs-collapse-target class="toggled">
                             <div ng-bind="f.description"></div>
                             <div><strong> Parameters </strong></div>
                             <div ng-repeat="p in f.parameters">
                                 <span ng-bind="p.name"></span>
-                                <span ng-bind="p.type"></span>
+                                <span ng-if="p.type =='String' || p.type == 'Number' || p.type =='Boolean' ">
+                                    <span ng-bind="p.type"></span>
+                                </span>
+                                <span ng-if="p.type !='String' && p.type != 'Number' && p.type !='Boolean' ">
+
+                                    <span> One of ADTs</span>
+                                </span>
                             </div>
-                            <div >
+                            <div>
                                 <strong>Return:</strong>
                                 <span ng-bind="f.returnType"></span>
                             </div>
