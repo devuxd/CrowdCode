@@ -1294,9 +1294,10 @@ function checkForErrors(e)
 //			debugger;
 		    if (e[i] != null)
 		    {
-                                // ignore errors from calling third party APIs, Their names finish with implementation
-                if(e[i].reason.endsWith('Implementation\' is not defined.')){
-                	console.log('enterd',e[i]);
+                // ignore errors from calling third party APIs, Their names finish with implementation
+                if(e[i].reason.endsWith('SaveObjectImplementation is not defined') || e[i].reason.endsWith('FetchObjectsImplementation is not defined')
+                    || e[i].reason.endsWith('DeleteObjectImplementation is not defined') || e[i].reason.endsWith('UpdateObjectImplementation is not defined')){
+                	console.log('checkForErrors e:',e[i]);
                     return "";
                 } else {
                     arrayOfErrors.push("Line " + e[i].line + ": " + e[i].reason);
@@ -7967,7 +7968,7 @@ angular
 
             function doReminder(){
                 //if no tutorial are open
-                if( tutorialOpen===0 || tutorialOpen <= 0   ){
+                if(  tutorialOpen <= 0   ){
                     //update the remaining time both in the popup and in the progress bar
                     popupWarning.$scope.skipMicrotaskIn = $scope.skipMicrotaskIn -= timeInterval;
 
@@ -13356,7 +13357,7 @@ angular.module("widgets/popup_reminder.html", []).run(["$templateCache", functio
     "        \n" +
     "                <br /> <br />\n" +
     "                <div style=\"text-align: center\">\n" +
-    "                  This microtask will be auto <strong>skipped</strong>  in: <br />\n" +
+    "                  This microtask will be automatically <strong>skipped</strong>  in: <br />\n" +
     "                  <h4>{{skipMicrotaskIn | date:'mm:ss'}}</h4>\n" +
     "                </div>\n" +
     "\n" +

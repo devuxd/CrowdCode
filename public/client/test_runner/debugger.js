@@ -46,13 +46,15 @@ Debugger.run = function (testCode, callsLogs) {
         eval(evalCode);
         _testResult.passed = true;
     } catch (e) {
-        console.log('run test result', e);
-        if (e instanceof chai.AssertionError) {
-            _testResult = e;
-        }
+        console.log('run test result, exception:', e);
+        _testResult = e;
         _testResult.passed = false;
-        //ignore throw exception in body of method for cheking valid argument exception
-        if(e instanceof TypeError){
+        // if (e instanceof chai.AssertionError) {
+        //     _testResult.passed = false;
+        // }
+         //ignore throw exception in body of method for checking valid argument exception
+        // else
+            if(e instanceof TypeError){
             console.log('entered chai throw');
             _testResult.passed = true;
         }

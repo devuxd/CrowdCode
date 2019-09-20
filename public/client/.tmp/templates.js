@@ -5187,7 +5187,7 @@ angular.module("widgets/popup_reminder.html", []).run(["$templateCache", functio
     "        \n" +
     "                <br /> <br />\n" +
     "                <div style=\"text-align: center\">\n" +
-    "                  This microtask will be auto <strong>skipped</strong>  in: <br />\n" +
+    "                  This microtask will be automatically <strong>skipped</strong>  in: <br />\n" +
     "                  <h4>{{skipMicrotaskIn | date:'mm:ss'}}</h4>\n" +
     "                </div>\n" +
     "\n" +
