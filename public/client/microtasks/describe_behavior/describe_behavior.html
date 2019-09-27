@@ -125,13 +125,14 @@
                 <ul class="nav nav-tabs">
                     <li class="active">
                         <a data-toggle="tab" class="title" href="#edit-tests">
-                            <span class="title">Edit Tests</span>
+                            <span class="glyphicon glyphicon-edit" style="color: #2a3855"></span>
+                            <span class="title">Edit Tests in the bellow</span>
                         </a>
                     </li>
                     <li>
                         <a data-toggle="tab" class="title" href="#run-tests">
-                            <span class="glyphicon glyphicon-play" style="color: green"></span>
-                            <span class="title" >Run Tests</span>
+                            <span class="glyphicon glyphicon-export" style="color: #2a3855"></span>
+                            <span class="title" >Run Tests in the bellow</span>
                         </a>
                     </li>
                 </ul>
@@ -295,13 +296,12 @@
                                       <!--data-template="/client/widgets/test_editor_help.html" data-auto-close="1"-->
                                       <!--data-placement="right" data-title="title of the help" data-style="" bs-popover>-->
 							    <!--</span>-->
-                                <span class="glyphicon glyphicon-question-sign" style="color:blue;margin-left: 15px"
+                                <span class="glyphicon glyphicon-question-sign" style="color:#389bff;margin-left: 15px;"
                                       ng-if="!t.isSimple"
                                       ng-click="$emit('queue-tutorial', 'test_editor_help', true); trackInteraction('Click Tutorial', 'Describe Behavior - Test editor', $event)"
                                       data-trigger="hover"
                                       data-placement="right"
-                                      data-title="Help for coding in test section" bs-popover>
-							    </span>
+                                      data-title="Help for coding in test section" bs-popover></span>
                             </div>
                             <div class="form-control code" test-editor name="code" function-name="{{funct.name}}"
                                  ng-model="t.code" errors="errors['code']" required>

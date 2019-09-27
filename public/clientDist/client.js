@@ -9212,12 +9212,17 @@ angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache"
     "                                </span>\n" +
     "                                <span ng-if=\"p.type !='String' && p.type != 'Number' && p.type !='Boolean' \">\n" +
     "\n" +
-    "                                    <span> One of ADTs</span>\n" +
+    "                                    <span>JSON object in the structure of one of Data Types</span>\n" +
     "                                </span>\n" +
     "                            </div>\n" +
     "                            <div>\n" +
     "                                <strong>Return:</strong>\n" +
-    "                                <span ng-bind=\"f.returnType\"></span>\n" +
+    "                                <span ng-if=\"f.name == 'FetchObjects'\">\n" +
+    "                                    <span> object [] : an array of JSON objects in the structure of one of the Data Types</span>\n" +
+    "                                </span>\n" +
+    "                                <span ng-if=\"f.name !== 'FetchObjects'\">\n" +
+    "                                <span ng-bind=\"f.returnType\"> </span>\n" +
+    "                                </span>\n" +
     "                            </div>\n" +
     "                        </div>\n" +
     "                    </div>\n" +
@@ -9508,13 +9513,14 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "                <ul class=\"nav nav-tabs\">\n" +
     "                    <li class=\"active\">\n" +
     "                        <a data-toggle=\"tab\" class=\"title\" href=\"#edit-tests\">\n" +
-    "                            <span class=\"title\">Edit Tests</span>\n" +
+    "                            <span class=\"glyphicon glyphicon-edit\" style=\"color: #2a3855\"></span>\n" +
+    "                            <span class=\"title\">Edit Tests in the bellow</span>\n" +
     "                        </a>\n" +
     "                    </li>\n" +
     "                    <li>\n" +
     "                        <a data-toggle=\"tab\" class=\"title\" href=\"#run-tests\">\n" +
-    "                            <span class=\"glyphicon glyphicon-play\" style=\"color: green\"></span>\n" +
-    "                            <span class=\"title\" >Run Tests</span>\n" +
+    "                            <span class=\"glyphicon glyphicon-export\" style=\"color: #2a3855\"></span>\n" +
+    "                            <span class=\"title\" >Run Tests in the bellow</span>\n" +
     "                        </a>\n" +
     "                    </li>\n" +
     "                </ul>\n" +
@@ -9678,13 +9684,12 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "                                      <!--data-template=\"widgets/test_editor_help.html\" data-auto-close=\"1\"-->\n" +
     "                                      <!--data-placement=\"right\" data-title=\"title of the help\" data-style=\"\" bs-popover>-->\n" +
     "							    <!--</span>-->\n" +
-    "                                <span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue;margin-left: 15px\"\n" +
+    "                                <span class=\"glyphicon glyphicon-question-sign\" style=\"color:#389bff;margin-left: 15px;\"\n" +
     "                                      ng-if=\"!t.isSimple\"\n" +
     "                                      ng-click=\"$emit('queue-tutorial', 'test_editor_help', true); trackInteraction('Click Tutorial', 'Describe Behavior - Test editor', $event)\"\n" +
     "                                      data-trigger=\"hover\"\n" +
     "                                      data-placement=\"right\"\n" +
-    "                                      data-title=\"Help for coding in test section\" bs-popover>\n" +
-    "							    </span>\n" +
+    "                                      data-title=\"Help for coding in test section\" bs-popover></span>\n" +
     "                            </div>\n" +
     "                            <div class=\"form-control code\" test-editor name=\"code\" function-name=\"{{funct.name}}\"\n" +
     "                                 ng-model=\"t.code\" errors=\"errors['code']\" required>\n" +
@@ -12937,46 +12942,34 @@ angular.module("tutorials/running_tests.html", []).run(["$templateCache", functi
 
 angular.module("tutorials/test_editor_help.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("tutorials/test_editor_help.html",
-    "<step style=\"width:900px;\">\n" +
+    "<step style=\"width:1100px;\">\n" +
     "    <div class=\"title\">In the test editor you can use ChaiJs. Two bellow examples might be useful:</div>\n" +
     "\n" +
     "    <div class=\"pull-left text-left \" style=\"margin-left: 15px\">\n" +
-    "        <div style=\"max-width: 880px\">\n" +
+    "        <div style=\"max-width: 1050px\">\n" +
     "\n" +
-    "        <h3 style=\"text-align: center\"> example 1:</h3>\n" +
-    "        <h4 style=\"text-align: left\">Function in function editor: </h4>\n" +
-    "        <code> function addTodo(todo){</code><br/>\n" +
-    "        <code> throw new TypeError('IllegalArgumentException');</code><br/>\n" +
-    "        <code> return todo;</code><br/>\n" +
-    "        <code> };</code>\n" +
-    "        <h4 style=\"text-align: left\">Tests in test editor: </h4>\n" +
+    "            <h4 style=\"text-align: center\"> Example 1:</h4>\n" +
+    "            <h5 style=\"text-align: left\">Function in function editor: </h5>\n" +
+    "           <pre><code>/* It saves an object in the database, return true if it can persist it otherwise it returns false. If any of the input arguments are empty or null, a TypeError should be thrown with a description. The function may make use of a 3rd party persistence library. */<br/><br/>function func1(object){ <br/>  if(!object.id || !object.adtType)<br/>     throw new TypeError('IllegalArgumentException');<br/>  var result= SaveObjectImplementation(object);<br/> return result;<br/>};</code></pre>\n" +
+    "            <h5 style=\"text-align: left\">Tests in test editor: </h5>\n" +
     "\n" +
-    "        <pre>var badFn = addTodo(null);\n" +
-    "expect(badFn).to.throw(TypeError);</pre>\n" +
+    "            <pre>var object ={\"id\": 36,\"adtType\": null};<br/>var badFn = func1(object);<br/>expect(badFn).to.throw(TypeError);</pre>\n" +
     "\n" +
     "        </div>\n" +
-    "        <div style=\"max-width: 880px\">\n" +
-    "        <h3 style=\"text-align: center\"> example 2:</h3>\n" +
-    "        <h4 style=\"text-align: left\">Function in function editor: </h4>\n" +
-    "        <code> function addTodo(todo){</code><br/>\n" +
-    "        <code> var result = SaveObjectImplementation(todo);</code><br/>\n" +
-    "        <code> return result;</code><br/>\n" +
-    "        <code> };</code>\n" +
-    "        <h4 style=\"text-align: left\">Tests in test editor: </h4>\n" +
-    "        <pre > var param ={ \"title\": \"coding\",\"description\": \"work on the crowd cod\",\n" +
-    "\"dueDate\": \"03/14/2018\",\"dataStoreId\": \"todo3\",\"userId\": \"emad.aghayi\", \"id\": 1,\"status\": 1,\n" +
-    "\"groupId\": \"schoolworks\",\"createdTime\": \"13:51\",\"createdDate\": \"05/21/2018\", \"priority\": 1,\"address\": \"Fairfax,VA,US 22032\"\n" +
-    "};\n" +
-    "var result1= addTodo(param);\n" +
-    "var fetched = FetchObjectImplementation(1);\n" +
-    "expect(fetched).to.deep.equal(result1);</pre>\n" +
+    "        <div style=\"max-width: 1050px\">\n" +
+    "            <h4 style=\"text-align: center\"> Example 2:</h4>\n" +
+    "            <h5 style=\"text-align: left\">Function in function editor: </h5>\n" +
+    "            <pre><code>/* It returns an array of log objects of an specific user, otherwise it returns empty array.*/<br/><br/>function func2(userId,adtType){<br/> var allObjectsWithSameADTType =FetchObjectsImplementation(adtType);<br/>    var resultArray=[];<br/>    for(var i=0; i< allObjectsWithSameADTType.length;i++){<br/>     if (allObjectsWithSameADTType.userId===userId){<br/>            resultArray.add(allObjectsWithSameADTType[i]);} }<br/> return resultArray;<br/>};</code></pre>\n" +
+    "            <h5 style=\"text-align: left\">Tests in test editor: </h5>\n" +
+    "            <pre><code>var object1 ={\"id\": 46,\"adtType\": \"log\",\"action\": \"purchased\", \"date\": \"03/24/2019\", \"userId\": \"eavazzad\", \"itemId\": 4 };<br/>var object2 ={\"id\": 48,\"adtType\": \"log\",\"action\": \"purchased\", \"date\": \"07/24/2018\", \"userId\": \"gamboo\", \"itemId\": 5 }; <br/>SaveObjectImplementation(object1); <br/>SaveObjectImplementation(object2);<br/>var testResult = func2('eavazzad');<br/>expect(testResult[0].id).to.deep.equal(46);<br/>expect(testResult.length).to.deep.equal(1);</code></pre>\n" +
     "\n" +
     "        </div>\n" +
     "        <p>TIP: While editing the test code, you can open the auto-complete by pressing OPTION+SPACE (Mac) or CTRL+SPACE\n" +
     "            (Win/Linux).</p>\n" +
-    "        <p>Need more information? if all the above tutorials do not solve your problem, comprehensive guide available on : <a\n" +
-    "                href=\"http://chaijs.com/api/bdd/\"\n" +
-    "                target=\"_blank\"><strong>Link</strong></a>.\n" +
+    "        <p>Need more information? if all the above tutorials do not solve your problem, comprehensive guide available on\n" +
+    "            : <a\n" +
+    "                    href=\"http://chaijs.com/api/bdd/\"\n" +
+    "                    target=\"_blank\"><strong>Link</strong></a>.\n" +
     "        </p>\n" +
     "    </div>\n" +
     "</step>");
@@ -13530,8 +13523,15 @@ angular.module("widgets/project_outline.template.html", []).run(["$templateCache
     "                </span>\n" +
     "            </div>\n" +
     "            <div>\n" +
+    "\n" +
+    "\n" +
     "                <strong>Return:</strong>\n" +
-    "                <span ng-bind=\"f.returnType\"></span>\n" +
+    "                <span ng-if=\"f.name == 'FetchObjects'\">\n" +
+    "                                    <span> object [] : an array of JSON objects in the structure of one of the Data Types</span>\n" +
+    "                                </span>\n" +
+    "                <span ng-if=\"f.name !== 'FetchObjects'\">\n" +
+    "                                <span ng-bind=\"f.returnType\"> </span>\n" +
+    "                                </span>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "    </div>\n" +

@@ -1,220 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5304ebeb-4f9d-4bfe-855d-9fe2f89cf93f" name="Default" comment="Bug fixed, the progress bar did not change at all. The reason was the tutorialOpen was less than zero but the if only checked it with zero.">
+    <list default="true" id="5304ebeb-4f9d-4bfe-855d-9fe2f89cf93f" name="Default" comment="Third party APIs had problem in both function and test editors. function body is added to test validator. Instead of checking only the endWith with the last word of 3rd party API it is now compare all signature.">
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/client/.tmp/client.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/client/.tmp/client.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/client/.tmp/templates.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/client/.tmp/templates.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/client/.tmp/test_runner/debugger.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/client/.tmp/test_runner/debugger.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/client/.tmp/test_runner/testvalidator-worker.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/client/.tmp/test_runner/testvalidator-worker.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/client/common/errorCheck.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/client/common/errorCheck.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/client/test_runner/debugger.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/client/test_runner/debugger.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/client/test_runner/testvalidator-worker.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/client/test_runner/testvalidator-worker.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/client/microtasks/dashboard/dashboard2.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/client/microtasks/dashboard/dashboard2.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/client/microtasks/describe_behavior/describe_behavior.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/client/microtasks/describe_behavior/describe_behavior.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/client/tutorials/test_editor_help.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/client/tutorials/test_editor_help.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/client/widgets/project_outline.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/client/widgets/project_outline.template.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/clientDist/client.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/clientDist/client.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/clientDist/test_runner/debugger.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/clientDist/test_runner/debugger.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/clientDist/test_runner/testvalidator-worker.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/clientDist/test_runner/testvalidator-worker.js" afterDir="false" />
     </list>
-    <ignored path="$PROJECT_DIR$/.tmp/" />
-    <ignored path="$PROJECT_DIR$/temp/" />
-    <ignored path="$PROJECT_DIR$/tmp/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FUSProjectUsageTrigger">
-    <session id="1692500499">
-      <usages-collector id="statistics.lifecycle.project">
-        <counts>
-          <entry key="project.closed" value="19" />
-          <entry key="project.open.time.1" value="1" />
-          <entry key="project.open.time.12" value="1" />
-          <entry key="project.open.time.4" value="2" />
-          <entry key="project.open.time.5" value="4" />
-          <entry key="project.open.time.6" value="6" />
-          <entry key="project.open.time.7" value="4" />
-          <entry key="project.open.time.8" value="2" />
-          <entry key="project.opened" value="20" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.edit">
-        <counts>
-          <entry key="dummy" value="1" />
-          <entry key="html" value="2678" />
-          <entry key="js" value="2910" />
-          <entry key="txt" value="844" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.edit">
-        <counts>
-          <entry key="HTML" value="2678" />
-          <entry key="JavaScript" value="2910" />
-          <entry key="PLAIN_TEXT" value="845" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.open">
-        <counts>
-          <entry key="1479" value="1" />
-          <entry key="566" value="1" />
-          <entry key="600" value="1" />
-          <entry key="672" value="1" />
-          <entry key="Procfile" value="1" />
-          <entry key="bak" value="1" />
-          <entry key="css" value="1" />
-          <entry key="ejs" value="3" />
-          <entry key="es6" value="1" />
-          <entry key="html" value="54" />
-          <entry key="js" value="94" />
-          <entry key="json" value="7" />
-          <entry key="jsp" value="8" />
-          <entry key="png" value="15" />
-          <entry key="psd" value="4" />
-          <entry key="ts" value="4" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.open">
-        <counts>
-          <entry key="CSS" value="1" />
-          <entry key="EJS" value="3" />
-          <entry key="HTML" value="52" />
-          <entry key="Image" value="19" />
-          <entry key="JSON" value="7" />
-          <entry key="JSP" value="8" />
-          <entry key="JavaScript" value="98" />
-          <entry key="PLAIN_TEXT" value="2" />
-          <entry key="Scratch" value="3" />
-          <entry key="TypeScript" value="4" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.js.language.service.starts">
-        <counts>
-          <entry key="TypeScriptServerServiceImpl" value="2" />
-        </counts>
-      </usages-collector>
-    </session>
-    <session id="1174538159">
-      <usages-collector id="statistics.lifecycle.project">
-        <counts>
-          <entry key="project.closed" value="6" />
-          <entry key="project.open.time.1" value="1" />
-          <entry key="project.open.time.3" value="1" />
-          <entry key="project.open.time.5" value="1" />
-          <entry key="project.open.time.7" value="4" />
-          <entry key="project.opened" value="7" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.open">
-        <counts>
-          <entry key="css" value="1" />
-          <entry key="html" value="32" />
-          <entry key="js" value="45" />
-          <entry key="ts" value="1" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.open">
-        <counts>
-          <entry key="CSS" value="1" />
-          <entry key="HTML" value="31" />
-          <entry key="JavaScript" value="45" />
-          <entry key="Scratch" value="1" />
-          <entry key="TypeScript" value="1" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.edit">
-        <counts>
-          <entry key="html" value="152" />
-          <entry key="js" value="634" />
-          <entry key="txt" value="207" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.edit">
-        <counts>
-          <entry key="HTML" value="152" />
-          <entry key="JavaScript" value="634" />
-          <entry key="PLAIN_TEXT" value="207" />
-        </counts>
-      </usages-collector>
-    </session>
-  </component>
   <component name="FavoritesManager">
     <favorites_list name="CrowdCode" />
-  </component>
-  <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/public/client/test_runner/testvalidator-worker.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1050">
-              <caret line="70" column="33" selection-start-line="70" selection-start-column="33" selection-end-line="70" selection-end-column="33" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external/lib.es5.d.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="31" column="17" selection-start-line="31" selection-start-column="17" selection-end-line="31" selection-end-column="17" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/client/common/errorCheck.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="25" column="50" selection-start-line="25" selection-start-column="50" selection-end-line="25" selection-end-column="50" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/client/functions/functionUtils.factory.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1028">
-              <caret line="174" column="126" selection-start-line="174" selection-start-column="126" selection-end-line="174" selection-end-column="126" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/client/tutorials/test_editor_help.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="319">
-              <caret line="31" column="14" selection-start-line="31" selection-start-column="14" selection-end-line="31" selection-end-column="14" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/clientDist/test_runner/ThirdPartAPIFunctions.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="319">
-              <caret line="35" column="9" selection-start-line="35" selection-start-column="9" selection-end-line="35" selection-end-column="9" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/client/test_runner/debugger.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="528">
-              <caret line="216" column="26" selection-start-line="216" selection-start-column="26" selection-end-line="216" selection-end-column="26" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/client/data_types/adtUtils.service.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="166">
-              <caret line="31" column="45" selection-start-line="31" selection-start-column="45" selection-end-line="31" selection-end-column="45" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -224,492 +29,18 @@
       </list>
     </option>
   </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>15</find>
-      <find>automati</find>
-      <find>reminder</find>
-      <find>t know how to do this microtask, cli</find>
-      <find>Code edits</find>
-      <find>old</find>
-      <find>mod</find>
-      <find>diffCode</find>
-      <find>test Result:</find>
-      <find>run tests</find>
-      <find>descri</find>
-      <find>CODE</find>
-      <find>STATUS</find>
-      <find>DESCRIPTION</find>
-      <find>descr</find>
-      <find>desc</find>
-      <find>FetcObjecImplementation</find>
-      <find>ObjectImp</find>
-      <find>result</find>
-      <find>imple</find>
-      <find>FetcObjecimplementation</find>
-      <find>run test result</find>
-      <find>implem</find>
-      <find>implementation</find>
-      <find>endsWith('Implementation</find>
-      <find>if(e.message.endsWith('SaveObjectImplementation is not defined') || e.message.endsWith('FetchObjectsImplementation is not defined')                 || e.message.endsWith('DeleteObjectImplementation is not defined') || e.message.endsWith('UpdateObjectImplementation is not defined')){                 console.log('ThirdpartyAPI is ignored',sendData.error);                 sendData.error=&quot;&quot;;                 //if()             } else</find>
-      <find>FetchObjectsImplementation</find>
-      <find>FetchObjects</find>
-      <find>FetchObject</find>
-      <find>he test code can't be empty</find>
-    </findStrings>
-    <replaceStrings>
-      <replace>objTemp[i].id</replace>
-      <replace>todo.id</replace>
-      <replace>deploymentInfo</replace>
-      <replace />
-    </replaceStrings>
-    <dirStrings>
-      <dir>$PROJECT_DIR$/public/video</dir>
-      <dir>$PROJECT_DIR$/public/client/questions</dir>
-      <dir>$PROJECT_DIR$</dir>
-      <dir>$PROJECT_DIR$/public</dir>
-    </dirStrings>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="IdeDocumentHistory">
-    <option name="CHANGED_PATHS">
-      <list>
-        <option value="$PROJECT_DIR$/public/client/microtasks/microtask_form.html" />
-        <option value="$PROJECT_DIR$/public/client/microtasks/microtaskForm.directive.js" />
-        <option value="$PROJECT_DIR$/public/client/microtasks/describe_behavior/describeBehavior.js" />
-        <option value="$PROJECT_DIR$/public/admin/dashboard/dashboard.js" />
-        <option value="$PROJECT_DIR$/public/client/tutorials/tutorialManager.js" />
-        <option value="$PROJECT_DIR$/public/client/tutorials/review_describe.html" />
-        <option value="$PROJECT_DIR$/public/client/ui_elements/nav_user_menu_template.html" />
-        <option value="$PROJECT_DIR$/public/client/microtasks/review/review_describe.html" />
-        <option value="$PROJECT_DIR$/public/client/tutorials/assertion_tests.html" />
-        <option value="$PROJECT_DIR$/public/client/tutorials/introduction_tutorial.html" />
-        <option value="$PROJECT_DIR$/public/client/client.js" />
-        <option value="$PROJECT_DIR$/public/client/ui_elements/nav_bar_template.html" />
-        <option value="$PROJECT_DIR$/public/client/ui_elements/projectStats.directive.js" />
-        <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/public/client/tutorials/main.html" />
-        <option value="$PROJECT_DIR$/public/client/tutorials/Review.html" />
-        <option value="$PROJECT_DIR$/public/client/tutorials/function_editor.html" />
-        <option value="$PROJECT_DIR$/public/client/tutorials/ImplementBehavior.html" />
-        <option value="$PROJECT_DIR$/public/client/tutorials/test_section.html" />
-        <option value="$PROJECT_DIR$/public/client/tutorials/running_tests.html" />
-        <option value="$PROJECT_DIR$/public/client/client.css" />
-        <option value="$PROJECT_DIR$/public/client/tutorials/new_funciton_stub_function.html" />
-        <option value="$PROJECT_DIR$/Datatest.js" />
-        <option value="$PROJECT_DIR$/public/client/microtasks/microtasks.service.js" />
-        <option value="$PROJECT_DIR$/public/client/tutorials/test_editor_help.html" />
-        <option value="$PROJECT_DIR$/edit.js" />
-        <option value="$PROJECT_DIR$/public/client/microtasks/describe_behavior/describe_behavior.html" />
-        <option value="$PROJECT_DIR$/public/client/microtasks/review/review.js" />
-        <option value="$PROJECT_DIR$/public/client/functions/javascriptTutorial.directive.js" />
-        <option value="$PROJECT_DIR$/config/config.json" />
-        <option value="$PROJECT_DIR$/lib/express-generator/bin/express-cli.js" />
-        <option value="$PROJECT_DIR$/public/clientReq/controller.js" />
-        <option value="$PROJECT_DIR$/public/clientReq/client_request.html" />
-        <option value="$PROJECT_DIR$/util/deployment_service.js" />
-        <option value="$PROJECT_DIR$/routes/app-routing.js" />
-        <option value="$PROJECT_DIR$/public/client/users/user.service.js" />
-        <option value="$PROJECT_DIR$/lib/microtask_service.js" />
-        <option value="$PROJECT_DIR$/public/loggedin.html" />
-        <option value="$PROJECT_DIR$/public/welcome.html" />
-        <option value="$PROJECT_DIR$/app.js" />
-        <option value="$PROJECT_DIR$/util/firebase_service.js" />
-        <option value="$PROJECT_DIR$/util/microtask_service.js" />
-        <option value="$PROJECT_DIR$/public/client/functions/functionUtils.factory.js" />
-        <option value="$PROJECT_DIR$/public/client/test_runner/ThirdPartAPIFunctions.js" />
-        <option value="$PROJECT_DIR$/public/client/microtasks/dashboard/dashboard2.html" />
-        <option value="$PROJECT_DIR$/public/client/widgets/project_outline.template.html" />
-        <option value="$PROJECT_DIR$/public/client/widgets/reminder.directive.js" />
-        <option value="$PROJECT_DIR$/public/client/widgets/popup_reminder.html" />
-        <option value="$PROJECT_DIR$/public/client/test_runner/debugger.js" />
-        <option value="$PROJECT_DIR$/public/client/common/errorCheck.js" />
-        <option value="$PROJECT_DIR$/public/client/test_runner/testvalidator-worker.js" />
-      </list>
-    </option>
-  </component>
-  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER">
-    <gruntfile path="$PROJECT_DIR$/public/client/Gruntfile.js">
-      <alias-task name="build" info="Alias for &quot;html2js&quot;, &quot;concat&quot;, &quot;replace:scripts&quot;, &quot;replace:jsp&quot;, &quot;replace:testRunner&quot;, &quot;copy&quot; tasks." file-path="$PROJECT_DIR$/public/client/Gruntfile.js">
-        <dependency value="html2js" />
-        <dependency value="concat" />
-        <dependency value="replace:scripts" />
-        <dependency value="replace:jsp" />
-        <dependency value="replace:testRunner" />
-        <dependency value="copy" />
-      </alias-task>
-      <core-task name="jshint" info="Validate files with JSHint." file-path="$PROJECT_DIR$/public/node_modules/grunt-contrib-jshint/tasks/jshint.js" multi="true" />
-      <core-task name="concat" info="Concatenate files." file-path="$PROJECT_DIR$/public/node_modules/grunt-contrib-concat/tasks/concat.js" multi="true">
-        <target value="generated" />
-      </core-task>
-      <core-task name="watch" info="Run predefined tasks whenever watched files change." file-path="$PROJECT_DIR$/public/node_modules/grunt-contrib-watch/tasks/watch.js" multi="false">
-        <target value="scripts" />
-      </core-task>
-      <core-task name="html2js" info="Compiles Angular-JS templates to JavaScript." file-path="$PROJECT_DIR$/public/node_modules/grunt-html2js/tasks/html2js.js" multi="true">
-        <target value="main" />
-      </core-task>
-      <core-task name="copy" info="Copy files." file-path="$PROJECT_DIR$/public/node_modules/grunt-contrib-copy/tasks/copy.js" multi="true">
-        <target value="main" />
-      </core-task>
-      <core-task name="replace" info="General purpose text replacement for grunt. Allows you to replace text in files using strings, regexs or functions." file-path="$PROJECT_DIR$/public/node_modules/grunt-text-replace/tasks/text-replace.js" multi="true">
-        <target value="scripts" />
-        <target value="jsp" />
-        <target value="testRunner" />
-      </core-task>
-    </gruntfile>
-    <gruntfile path="$PROJECT_DIR$/public/admin/Gruntfile.js">
-      <alias-task name="build" info="Alias for &quot;html2js&quot;, &quot;concat&quot;, &quot;replace:scripts&quot;, &quot;replace:jsp&quot;, &quot;copy&quot; tasks." file-path="$PROJECT_DIR$/public/admin/Gruntfile.js">
-        <dependency value="html2js" />
-        <dependency value="concat" />
-        <dependency value="replace:scripts" />
-        <dependency value="replace:jsp" />
-        <dependency value="copy" />
-      </alias-task>
-      <core-task name="jshint" info="Validate files with JSHint." file-path="$PROJECT_DIR$/public/node_modules/grunt-contrib-jshint/tasks/jshint.js" multi="true" />
-      <core-task name="concat" info="Concatenate files." file-path="$PROJECT_DIR$/public/node_modules/grunt-contrib-concat/tasks/concat.js" multi="true">
-        <target value="generated" />
-      </core-task>
-      <core-task name="watch" info="Run predefined tasks whenever watched files change." file-path="$PROJECT_DIR$/public/node_modules/grunt-contrib-watch/tasks/watch.js" multi="false">
-        <target value="scripts" />
-      </core-task>
-      <core-task name="html2js" info="Compiles Angular-JS templates to JavaScript." file-path="$PROJECT_DIR$/public/node_modules/grunt-html2js/tasks/html2js.js" multi="true">
-        <target value="main" />
-      </core-task>
-      <core-task name="copy" info="Copy files." file-path="$PROJECT_DIR$/public/node_modules/grunt-contrib-copy/tasks/copy.js" multi="true">
-        <target value="main" />
-      </core-task>
-      <core-task name="replace" info="General purpose text replacement for grunt. Allows you to replace text in files using strings, regexs or functions." file-path="$PROJECT_DIR$/public/node_modules/grunt-text-replace/tasks/text-replace.js" multi="true">
-        <target value="scripts" />
-        <target value="jsp" />
-      </core-task>
-    </gruntfile>
-  </component>
-  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
   <component name="JsFlowSettings">
     <service-enabled>true</service-enabled>
     <exe-path />
     <other-services-enabled>true</other-services-enabled>
     <auto-save>true</auto-save>
   </component>
-  <component name="JsGulpfileManager">
-    <detection-done>true</detection-done>
-    <sorting>DEFINITION_ORDER</sorting>
-  </component>
-  <component name="NodeModulesDirectoryManager">
-    <handled-path value="$PROJECT_DIR$/lib/express-generator/node_modules" />
-    <handled-path value="$PROJECT_DIR$/node_modules" />
-    <handled-path value="$PROJECT_DIR$/public/node_modules" />
-  </component>
-  <component name="NodePackageJsonFileManager">
-    <packageJsonPaths>
-      <path value="$PROJECT_DIR$/lib/express-generator/package.json" />
-      <path value="$PROJECT_DIR$/package.json" />
-      <path value="$PROJECT_DIR$/public/include/JSONedit-gh-pages/bower_components/bootstrap/package.json" />
-      <path value="$PROJECT_DIR$/public/include/JSONedit-gh-pages/bower_components/jquery-ui/package.json" />
-      <path value="$PROJECT_DIR$/public/include/ace-editor/package.json" />
-      <path value="$PROJECT_DIR$/public/include/angular-file-upload/package.json" />
-      <path value="$PROJECT_DIR$/public/include/angular-hotkeys/package.json" />
-      <path value="$PROJECT_DIR$/public/include/angular-loading-bar/package.json" />
-      <path value="$PROJECT_DIR$/public/include/angular-messages/package.json" />
-      <path value="$PROJECT_DIR$/public/include/angular-strap/package.json" />
-      <path value="$PROJECT_DIR$/public/include/angular-toaster/package.json" />
-      <path value="$PROJECT_DIR$/public/include/angularjs-scroll-glue/package.json" />
-      <path value="$PROJECT_DIR$/public/include/bootstrap-additions/package.json" />
-      <path value="$PROJECT_DIR$/public/include/bootstrap-switch/package.json" />
-      <path value="$PROJECT_DIR$/public/include/bootstrap-toggle/package.json" />
-      <path value="$PROJECT_DIR$/public/include/jsdiff-master/package.json" />
-      <path value="$PROJECT_DIR$/public/include/ng-clip/package.json" />
-      <path value="$PROJECT_DIR$/public/include/simplediff/package.json" />
-      <path value="$PROJECT_DIR$/public/include/ui-ace-editor/package.json" />
-      <path value="$PROJECT_DIR$/public/include/ui-layout/package.json" />
-      <path value="$PROJECT_DIR$/public/include/zeroclipboard-2.2.0/package.json" />
-      <path value="$PROJECT_DIR$/public/package.json" />
-    </packageJsonPaths>
-  </component>
-  <component name="ProjectFrameBounds">
-    <option name="y" value="23" />
-    <option name="width" value="1680" />
-    <option name="height" value="1004" />
-  </component>
+  <component name="ProjectId" id="1RL1I0pAnjptVSjjL4KkFD3gZ4h" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
-  </component>
-  <component name="ProjectView">
-    <navigator proportions="" version="1">
-      <autoscrollToSource ProjectPane="true" />
-      <autoscrollFromSource ProjectPane="true" />
-      <foldersAlwaysOnTop value="false" />
-    </navigator>
-    <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="admin" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="admin" type="462c0819:PsiDirectoryNode" />
-              <item name="tests" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="common" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="data_types" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="functions" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="microtasks" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="microtasks" type="462c0819:PsiDirectoryNode" />
-              <item name="challenge_review" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="microtasks" type="462c0819:PsiDirectoryNode" />
-              <item name="debug_test_failure" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="microtasks" type="462c0819:PsiDirectoryNode" />
-              <item name="describe_behavior" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="microtasks" type="462c0819:PsiDirectoryNode" />
-              <item name="implement_behavior" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="microtasks" type="462c0819:PsiDirectoryNode" />
-              <item name="review" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="newsfeed" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="test_runner" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="tests" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="third_party_api" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="tutorials" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="ui_elements" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="widgets" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="clientDist" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="clientDist" type="462c0819:PsiDirectoryNode" />
-              <item name="test_runner" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-              <item name="ace-editor" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-              <item name="ace-editor" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-              <item name="ace-editor" type="462c0819:PsiDirectoryNode" />
-              <item name="src-min" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-              <item name="ace-editor" type="462c0819:PsiDirectoryNode" />
-              <item name="src-noconflict" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-              <item name="ace-editor" type="462c0819:PsiDirectoryNode" />
-              <item name="src-noconflict" type="462c0819:PsiDirectoryNode" />
-              <item name="snippets" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-              <item name="ng-clip" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-              <item name="ng-clip" type="462c0819:PsiDirectoryNode" />
-              <item name="dest" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-              <item name="ng-clip" type="462c0819:PsiDirectoryNode" />
-              <item name="dest" type="462c0819:PsiDirectoryNode" />
-              <item name="ng-clip.js" type="620a8d5e:NestingTreeNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-              <item name="simplediff" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-              <item name="simplediff" type="462c0819:PsiDirectoryNode" />
-              <item name="simplediff.js" type="620a8d5e:NestingTreeNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="util" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
-              <item name="Scratches" type="d62648e6:ScratchProjectViewPane$MyRootNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scope" />
-      <pane id="NBKnowledgePane" />
-    </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
@@ -719,6 +50,12 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="js.buildTools.grunt.grunt-cli.package" value="$PROJECT_DIR$/node_modules/grunt-cli" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="restartRequiresConfirmation" value="false" />
@@ -726,16 +63,16 @@
     <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/public/img/tutorial/review" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/public/include/prism" />
       <recent name="$PROJECT_DIR$/public/clientReq" />
       <recent name="$PROJECT_DIR$/doc" />
       <recent name="$PROJECT_DIR$/public/video" />
       <recent name="$PROJECT_DIR$/public/img/tutorial/review" />
-      <recent name="$PROJECT_DIR$/public/img/tutorial" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/public/img/tutorial/review" />
-      <recent name="$PROJECT_DIR$" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -751,13 +88,13 @@
     </option>
   </component>
   <component name="RunManager" selected="Node.js.Node Run">
-    <configuration name="Node Run JavaScript" type="JavascriptDebugType" factoryName="JavaScript Debug" uri="http://localhost:3000">
+    <configuration name="Node Run JavaScript" type="JavascriptDebugType" uri="http://localhost:3000">
       <method v="2" />
     </configuration>
-    <configuration name="questionsList.html" type="JavascriptDebugType" factoryName="JavaScript Debug" nameIsGenerated="true" uri="http://localhost:63342/CrowdCode/public/client/questions/questionsList.html">
+    <configuration name="questionsList.html" type="JavascriptDebugType" nameIsGenerated="true" uri="http://localhost:63342/CrowdCode/public/client/questions/questionsList.html">
       <method v="2" />
     </configuration>
-    <configuration name="Node Run" type="NodeJSConfigurationType" factoryName="Node.js" path-to-js-file="bin/www" working-dir="$PROJECT_DIR$">
+    <configuration name="Node Run" type="NodeJSConfigurationType" path-to-js-file="bin/www" working-dir="$PROJECT_DIR$">
       <EXTENSION ID="com.jetbrains.nodejs.run.NodeJSStartBrowserRunConfigurationExtension">
         <browser start="true" with-js-debugger="true" url="http://localhost:3000" />
       </EXTENSION>
@@ -772,7 +109,7 @@
         </option>
       </method>
     </configuration>
-    <configuration default="true" type="NodeJSConfigurationType" factoryName="Node.js" path-to-js-file="bin/www" working-dir="$PROJECT_DIR$">
+    <configuration default="true" type="NodeJSConfigurationType" path-to-js-file="bin/www" working-dir="$PROJECT_DIR$">
       <method v="2">
         <option name="GruntBeforeRunTask" enabled="true">
           <node-interpreter value="project" />
@@ -784,12 +121,12 @@
         </option>
       </method>
     </configuration>
-    <configuration default="true" type="js.build_tools.grunt" factoryName="Grunt.js">
+    <configuration default="true" type="js.build_tools.grunt">
       <node-interpreter value="project" />
       <envs />
       <method v="2" />
     </configuration>
-    <configuration name="build (1)" type="js.build_tools.grunt" factoryName="Grunt.js" temporary="true">
+    <configuration name="build (1)" type="js.build_tools.grunt" temporary="true">
       <node-interpreter value="project" />
       <gruntfile value="$PROJECT_DIR$/public/admin/Gruntfile.js" />
       <tasks>
@@ -798,7 +135,7 @@
       <envs />
       <method v="2" />
     </configuration>
-    <configuration name="build" type="js.build_tools.grunt" factoryName="Grunt.js" temporary="true">
+    <configuration name="build" type="js.build_tools.grunt" temporary="true">
       <node-interpreter value="project" />
       <gruntfile value="$PROJECT_DIR$/public/client/Gruntfile.js" />
       <tasks>
@@ -807,27 +144,27 @@
       <envs />
       <method v="2" />
     </configuration>
-    <configuration name="concat" type="js.build_tools.grunt" factoryName="Grunt.js" temporary="true">
-      <node-interpreter value="project" />
-      <gruntfile value="$PROJECT_DIR$/public/admin/Gruntfile.js" />
-      <tasks>
-        <task value="concat" />
-      </tasks>
-      <envs />
-      <method v="2" />
-    </configuration>
-    <configuration name="replace (1)" type="js.build_tools.grunt" factoryName="Grunt.js" temporary="true">
-      <node-interpreter value="project" />
-      <gruntfile value="$PROJECT_DIR$/public/admin/Gruntfile.js" />
-      <tasks>
-        <task value="replace" />
-      </tasks>
-      <envs />
-      <method v="2" />
-    </configuration>
-    <configuration name="replace" type="js.build_tools.grunt" factoryName="Grunt.js" temporary="true">
+    <configuration name="html2js (1)" type="js.build_tools.grunt" temporary="true">
       <node-interpreter value="project" />
       <gruntfile value="$PROJECT_DIR$/public/client/Gruntfile.js" />
+      <tasks>
+        <task value="html2js" />
+      </tasks>
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="html2js" type="js.build_tools.grunt" temporary="true">
+      <node-interpreter value="project" />
+      <gruntfile value="$PROJECT_DIR$/public/admin/Gruntfile.js" />
+      <tasks>
+        <task value="html2js" />
+      </tasks>
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="replace (1)" type="js.build_tools.grunt" temporary="true">
+      <node-interpreter value="project" />
+      <gruntfile value="$PROJECT_DIR$/public/admin/Gruntfile.js" />
       <tasks>
         <task value="replace" />
       </tasks>
@@ -835,22 +172,22 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="JavaScript Debug.questionsList.html" />
-      <item itemvalue="Node.js.Node Run" />
-      <item itemvalue="JavaScript Debug.Node Run JavaScript" />
       <item itemvalue="Grunt.js.build (1)" />
-      <item itemvalue="Grunt.js.build" />
-      <item itemvalue="Grunt.js.replace" />
+      <item itemvalue="Grunt.js.html2js" />
+      <item itemvalue="Grunt.js.html2js (1)" />
       <item itemvalue="Grunt.js.replace (1)" />
-      <item itemvalue="Grunt.js.concat" />
+      <item itemvalue="Grunt.js.build" />
+      <item itemvalue="JavaScript Debug.questionsList.html" />
+      <item itemvalue="JavaScript Debug.Node Run JavaScript" />
+      <item itemvalue="Node.js.Node Run" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Grunt.js.build" />
         <item itemvalue="Grunt.js.build (1)" />
+        <item itemvalue="Grunt.js.build" />
         <item itemvalue="Grunt.js.replace (1)" />
-        <item itemvalue="Grunt.js.concat" />
-        <item itemvalue="Grunt.js.replace" />
+        <item itemvalue="Grunt.js.html2js (1)" />
+        <item itemvalue="Grunt.js.html2js" />
       </list>
     </recent_temporary>
   </component>
@@ -990,7 +327,10 @@
       <workItem from="1568831773447" duration="3763000" />
       <workItem from="1568927913064" duration="73000" />
       <workItem from="1568928096369" duration="1772000" />
-      <workItem from="1568996913026" duration="7851000" />
+      <workItem from="1568996913026" duration="8620000" />
+      <workItem from="1569344838739" duration="8259000" />
+      <workItem from="1569431481446" duration="6310000" />
+      <workItem from="1569588917573" duration="1976000" />
     </task>
     <task id="LOCAL-00001" summary="move folders from CrowdeCode to root. Heroku can not read files in sub folder. it expects to find package.json in root of the repo.">
       <created>1527885411741</created>
@@ -1230,11 +570,15 @@
       <option name="project" value="LOCAL" />
       <updated>1568839936440</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="Third party APIs had problem in both function and test editors. function body is added to test validator. Instead of checking only the endWith with the last word of 3rd party API it is now compare all signature.">
+      <created>1569011823983</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1569011823983</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
-  </component>
-  <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="481982000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1244,57 +588,6 @@
       <are-packages-shown value="true" />
       <is-autoscroll-to-source value="true" />
     </todo-panel>
-  </component>
-  <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1680" height="1004" extended-state="0" />
-    <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.62992126" visible="true" weight="0.20433997" />
-      <window_info id="Structure" order="1" sideWeight="0.4912689" weight="0.25" />
-      <window_info id="Grunt " order="2" sideWeight="0.37007874" side_tool="true" visible="true" weight="0.20433997" />
-      <window_info id="Favorites" order="3" sideWeight="0.3538999" side_tool="true" weight="0.26066098" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32283464" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.208099" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.32733408" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" weight="0.32945284" />
-      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Terminal" order="8" weight="0.2895981" />
-      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Version Control" order="10" visible="true" weight="0.28908888" />
-      <window_info anchor="bottom" id="Messages" order="11" />
-      <window_info anchor="bottom" id="Statistic" order="12" />
-      <window_info anchor="bottom" id="TypeScript" order="13" weight="0.32932693" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Notes" order="3" />
-    </layout>
-    <layout-to-restore>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.64663464" visible="true" weight="0.17842074" />
-      <window_info id="Structure" order="1" sideWeight="0.4912689" weight="0.25" />
-      <window_info id="Grunt " order="2" sideWeight="0.3533654" side_tool="true" visible="true" weight="0.17842074" />
-      <window_info id="Favorites" order="3" sideWeight="0.3538999" side_tool="true" weight="0.26066098" />
-      <window_info anchor="bottom" id="TypeScript" order="0" weight="0.32932693" />
-      <window_info anchor="bottom" id="Message" order="1" />
-      <window_info active="true" anchor="bottom" id="Find" order="2" visible="true" weight="0.28846154" />
-      <window_info anchor="bottom" id="Run" order="3" weight="0.19591346" />
-      <window_info anchor="bottom" id="Debug" order="4" weight="0.26081732" />
-      <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="7" weight="0.32945284" />
-      <window_info anchor="bottom" id="Docker" order="8" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Terminal" order="9" weight="0.2908654" />
-      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="11" weight="0.32932693" />
-      <window_info anchor="bottom" id="Messages" order="12" />
-      <window_info anchor="bottom" id="Statistic" order="13" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Notes" order="3" />
-    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -1315,28 +608,12 @@
         <entry key="MAIN">
           <value>
             <State>
-              <option name="RECENTLY_FILTERED_USER_GROUPS">
-                <collection />
-              </option>
-              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
-                <collection />
-              </option>
-              <option name="COLUMN_ORDER">
-                <list>
-                  <option value="0" />
-                  <option value="1" />
-                  <option value="2" />
-                  <option value="3" />
-                </list>
-              </option>
+              <option name="COLUMN_ORDER" />
             </State>
           </value>
         </entry>
       </map>
     </option>
-  </component>
-  <component name="VcsContentAnnotationSettings">
-    <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
@@ -1346,7 +623,6 @@
       <path value="$PROJECT_DIR$/services/deploy19" />
       <path value="$PROJECT_DIR$/services/deploy138" />
     </ignored-roots>
-    <MESSAGE value="change welcome page to AlignNumber" />
     <MESSAGE value="add documents to the project" />
     <MESSAGE value="change welcome page, add enter name of the project" />
     <MESSAGE value="add deployment info to Client Request page" />
@@ -1371,7 +647,8 @@
     <MESSAGE value="fix bug in logs for review task" />
     <MESSAGE value="update 3rd party API" />
     <MESSAGE value="Bug fixed, the progress bar did not change at all. The reason was the tutorialOpen was less than zero but the if only checked it with zero." />
-    <option name="LAST_COMMIT_MESSAGE" value="Bug fixed, the progress bar did not change at all. The reason was the tutorialOpen was less than zero but the if only checked it with zero." />
+    <MESSAGE value="Third party APIs had problem in both function and test editors. function body is added to test validator. Instead of checking only the endWith with the last word of 3rd party API it is now compare all signature." />
+    <option name="LAST_COMMIT_MESSAGE" value="Third party APIs had problem in both function and test editors. function body is added to test validator. Instead of checking only the endWith with the last word of 3rd party API it is now compare all signature." />
     <option name="PRESELECT_EXISTING_CHANGELIST" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1388,9 +665,6 @@
           <option name="timeStamp" value="93" />
         </line-breakpoint>
       </breakpoints>
-      <breakpoints-dialog>
-        <breakpoints-dialog />
-      </breakpoints-dialog>
     </breakpoint-manager>
   </component>
   <component name="debuggerHistoryManager">
@@ -1441,309 +715,5 @@
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
     </expressions>
-  </component>
-  <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/public/client/ui_elements/nav_bar_template.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-99" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/ui_elements/right_bar_template.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/client.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
-          <caret line="27" column="26" selection-start-line="27" selection-start-column="26" selection-end-line="27" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/client.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="188">
-          <caret line="463" column="1" selection-start-line="463" selection-start-column="1" selection-end-line="463" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/microtask_form.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="50" selection-start-line="17" selection-start-column="50" selection-end-line="17" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/widgets/reminder.directive.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="268">
-          <caret line="68" column="23" selection-start-line="68" selection-start-column="23" selection-end-line="68" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/include/ace-editor/src/ext-whitespace.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="231">
-          <caret line="117" column="35" selection-start-line="117" selection-start-column="35" selection-end-line="117" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="http://localhost:3000/clientDist/client.js">
-      <provider selected="true" editor-type-id="httpFileEditor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/widgets/reminder.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="13" column="20" selection-start-line="13" selection-start-column="20" selection-end-line="13" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/widgets/statements_progress_bar.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/widgets/popup_reminder.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="28" selection-start-line="8" selection-start-column="28" selection-end-line="8" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/tutorials/introduction_tutorial.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="18" column="91" lean-forward="true" selection-start-line="18" selection-start-column="91" selection-end-line="18" selection-end-column="91" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/newsfeed/news_detail_Review_DescribeFunctionBehavior.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="66">
-          <caret line="6" column="7" selection-start-line="6" selection-start-column="7" selection-end-line="6" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/review/review_implement.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="32" selection-start-line="14" selection-start-column="32" selection-end-line="14" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/review/review_loading.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/review/review_WriteFunction.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/review/review_WriteTest.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/review/review.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-672" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/widgets/json_editor.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/review/review.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1980">
-          <caret line="132" column="16" selection-start-line="132" selection-start-column="13" selection-end-line="132" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/include/ace-editor/src/ext-old_ie.js">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/widgets/jsReader.directive.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="25" selection-start-line="9" selection-start-column="25" selection-end-line="9" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/widgets/jsonDiffReader.directive.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1740">
-          <caret line="116" column="51" selection-start-line="116" selection-start-column="51" selection-end-line="116" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/widgets/function_editor.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/widgets/functionEditor.directive.js">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/common/json_utils.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="9" selection-start-line="11" selection-start-column="9" selection-end-line="11" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/include/simplediff/simplediff.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="14" column="4" selection-start-line="14" selection-start-column="4" selection-end-line="14" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/review/review_form.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/describe_behavior/describe_behavior.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1466">
-          <caret line="378" column="92" selection-start-line="378" selection-start-column="92" selection-end-line="378" selection-end-column="92" />
-          <folding>
-            <element signature="n#style#0;n#span#0;n#button#0;n#span#2;n#div#0;n#div#2;n#div#2;n#div#1;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/review/review_describe.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" column="19" selection-start-line="21" selection-start-column="19" selection-end-line="21" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/describe_behavior/describeBehavior.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
-          <caret line="466" column="26" selection-start-line="466" selection-start-column="20" selection-end-line="466" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/challenge_review/review_WriteTest.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="188">
-          <caret line="56" column="21" selection-start-line="56" selection-start-column="21" selection-end-line="56" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/include/ace-editor/src-noconflict/snippets/perl.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="188">
-          <caret line="205" column="11" selection-start-line="205" selection-start-column="11" selection-end-line="205" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/admin/tests/tests.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="16" selection-start-line="4" selection-start-column="16" selection-end-line="4" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/admin/tests/tests.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-12" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/debug_test_failure/debug_test_failure.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="34" column="46" selection-start-line="34" selection-start-column="46" selection-end-line="34" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/implement_behavior/implement_behavior.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="206">
-          <caret line="96" column="37" selection-start-line="96" selection-start-column="37" selection-end-line="96" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/implement_behavior/implementBehavior.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
-          <caret line="104" column="33" selection-start-line="104" selection-start-column="27" selection-end-line="104" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/clientDist/client.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="409">
-          <caret line="4779" column="48" lean-forward="true" selection-start-line="4779" selection-start-column="48" selection-end-line="4779" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/tests/tests.service.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/tests/test.factory.js">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/tests/testsArray.factory.js">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/third_party_api/thirdPartyAPI.service.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1365" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/data_types/adtUtils.service.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
-          <caret line="31" column="45" selection-start-line="31" selection-start-column="45" selection-end-line="31" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/common/errorCheck.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="25" column="50" selection-start-line="25" selection-start-column="50" selection-end-line="25" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external/lib.es5.d.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="31" column="17" selection-start-line="31" selection-start-column="17" selection-end-line="31" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/functions/functionUtils.factory.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1028">
-          <caret line="174" column="126" selection-start-line="174" selection-start-column="126" selection-end-line="174" selection-end-column="126" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/tutorials/test_editor_help.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="319">
-          <caret line="31" column="14" selection-start-line="31" selection-start-column="14" selection-end-line="31" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/clientDist/test_runner/ThirdPartAPIFunctions.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="319">
-          <caret line="35" column="9" selection-start-line="35" selection-start-column="9" selection-end-line="35" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/test_runner/debugger.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="528">
-          <caret line="216" column="26" selection-start-line="216" selection-start-column="26" selection-end-line="216" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/test_runner/testvalidator-worker.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1050">
-          <caret line="70" column="33" selection-start-line="70" selection-start-column="33" selection-end-line="70" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
   </component>
 </project>
