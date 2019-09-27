@@ -73,12 +73,17 @@
                                 </span>
                                 <span ng-if="p.type !='String' && p.type != 'Number' && p.type !='Boolean' ">
 
-                                    <span> One of ADTs</span>
+                                    <span>JSON object in the structure of one of Data Types</span>
                                 </span>
                             </div>
                             <div>
                                 <strong>Return:</strong>
-                                <span ng-bind="f.returnType"></span>
+                                <span ng-if="f.name == 'FetchObjects'">
+                                    <span> object [] : an array of JSON objects in the structure of one of the Data Types</span>
+                                </span>
+                                <span ng-if="f.name !== 'FetchObjects'">
+                                <span ng-bind="f.returnType"> </span>
+                                </span>
                             </div>
                         </div>
                     </div>
