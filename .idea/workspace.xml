@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5304ebeb-4f9d-4bfe-855d-9fe2f89cf93f" name="Default" comment="add loader.io">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="5304ebeb-4f9d-4bfe-855d-9fe2f89cf93f" name="Default" comment="update default project">
       <change beforePath="$PROJECT_DIR$/public/welcome.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/welcome.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -324,7 +323,7 @@
       <workItem from="1569344838739" duration="8259000" />
       <workItem from="1569431481446" duration="6310000" />
       <workItem from="1569588917573" duration="1976000" />
-      <workItem from="1635183908089" duration="914000" />
+      <workItem from="1635183908089" duration="1234000" />
     </task>
     <task id="LOCAL-00001" summary="move folders from CrowdeCode to root. Heroku can not read files in sub folder. it expects to find package.json in root of the repo.">
       <created>1527885411741</created>
@@ -578,7 +577,14 @@
       <option name="project" value="LOCAL" />
       <updated>1635183953680</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="update default project">
+      <created>1635189231698</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1635189231698</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="TodoView">
@@ -623,7 +629,6 @@
       <path value="$PROJECT_DIR$/services/deploy19" />
       <path value="$PROJECT_DIR$/services/deploy138" />
     </ignored-roots>
-    <MESSAGE value="change welcome page, add enter name of the project" />
     <MESSAGE value="add deployment info to Client Request page" />
     <MESSAGE value="modify deployment feature&#10;it reads gitHub credential from Firebase." />
     <MESSAGE value="update deployment module" />
@@ -648,7 +653,8 @@
     <MESSAGE value="Bug fixed, the progress bar did not change at all. The reason was the tutorialOpen was less than zero but the if only checked it with zero." />
     <MESSAGE value="Third party APIs had problem in both function and test editors. function body is added to test validator. Instead of checking only the endWith with the last word of 3rd party API it is now compare all signature." />
     <MESSAGE value="add loader.io" />
-    <option name="LAST_COMMIT_MESSAGE" value="add loader.io" />
+    <MESSAGE value="update default project" />
+    <option name="LAST_COMMIT_MESSAGE" value="update default project" />
     <option name="PRESELECT_EXISTING_CHANGELIST" value="true" />
   </component>
   <component name="debuggerHistoryManager">
