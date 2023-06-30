@@ -172,7 +172,7 @@ angular
             var ast = parsed.ast;
 
             //add function third party API names to be validated
-            var thirdPartyAPINames = ['SaveObjectImplementation', 'FetchObjectImplementation', 'DeleteObjectImplementation', 'UpdateObjectImplementation','FetchAllObjectsImplementation'];
+            var thirdPartyAPINames = ['SaveObjectImplementation', 'DeleteObjectImplementation', 'UpdateObjectImplementation','FetchObjectsImplementation'];
             // all defined functions for crowd
             var apiFunctionNames = functionsService.allFunctionNames();
 

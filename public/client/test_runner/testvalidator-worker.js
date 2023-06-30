@@ -1,6 +1,8 @@
 var expect = undefined;
 var should = undefined;
 var functionEmptyBody, functionName;
+var thirdPartyAPIsCode= ' function SaveObjectImplementation() {};  function FetchObjectsImplementation() {};' +
+    '  function DeleteObjectImplementation() {};  function UpdateObjectImplementation() {};  \n';
 
 self.addEventListener('message', function(message){
 
@@ -40,36 +42,39 @@ self.addEventListener('message', function(message){
 
 		// add the test code
 		evalCode += data.code;
+		//add empty function for avoiding show the error because of third party API
+		evalCode +=thirdPartyAPIsCode;
 		try{
 			eval(evalCode);
 		} catch(e){
-			console.log('excption',e);
+			console.log('testvalidator-worker excption: ',e);
 			// if it not an assertion error, show it
-			if( !( e instanceof chai.AssertionError ) && !(e instanceof TypeError)){
+            // ignore errors from calling third party APIs, Their names finish with implementation
+         	if( !( e instanceof chai.AssertionError ) && !(e instanceof TypeError)){
 
                     sendData.error = e.message;
 
 			}
-			// else console.log(e);
+
 		} finally {
-            // ignore errors from calling third party APIs, Their names finish with implementation
-				if(sendData.error.endsWith('Implementation is not defined')){
-					sendData.error="";
-					//if()
+
+            // if(e.message.endsWith('SaveObjectImplementation is not defined') || e.message.endsWith('FetchObjectsImplementation is not defined')
+            //     || e.message.endsWith('DeleteObjectImplementation is not defined') || e.message.endsWith('UpdateObjectImplementation is not defined')){
+            //     console.log('ThirdpartyAPI is ignored',sendData.error);
+            //     sendData.error="";
+            //     //if()
+            // }
+
+            if( _calls == 0 && !data.code.includes(functionName)){
+				sendData.error = 'the function '+functionName+' is never called!';
 				}
-
-			if( sendData.error == "" ) {
-
-               // if( _calls == 0 && !data.code.includes(functionName)){
-				// sendData.error = 'the function '+functionName+' is never called!';
-				// }
 				/*else if( _calls > 1 ){
 					sendData.error = 'the function '+functionName+' should be called one time!';
 				}*/
-				// else if( _assertions == 0  && !data.code.includes('expect(')){
-				// 	sendData.error = 'express at lest one assertion!'
-				// }
-			}
+				else if( _assertions == 0  && !data.code.includes('expect(')){
+					sendData.error = 'express at lest one assertion!'
+				}
+
 		}
 
 		self.postMessage( sendData );

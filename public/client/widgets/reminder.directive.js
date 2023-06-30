@@ -58,7 +58,7 @@ angular
                 microtaskInterval      = $interval(doReminder, timeInterval);
 
 
-                console.log('REMINDER: microtask laoded ',{ fetchTime: fetchTime, startTime: startTime, diff: startTime-fetchTime},microtaskInterval);
+                console.log('REMINDER: microtask should be submitted less than 15 min ',{ fetchTime: fetchTime, startTime: startTime, diff: startTime-fetchTime, tutorialOpen:tutorialOpen,microtaskInterval:microtaskInterval});
 
             }
 
@@ -74,7 +74,7 @@ angular
 
             function doReminder(){
                 //if no tutorial are open
-                if( tutorialOpen===0 ){
+                if(  tutorialOpen <= 0   ){
                     //update the remaining time both in the popup and in the progress bar
                     popupWarning.$scope.skipMicrotaskIn = $scope.skipMicrotaskIn -= timeInterval;
 

@@ -1,79 +1,94 @@
 <div bs-collapse start-collapsed="false" allow-multiple="true">
-	<div style="text-align: center"><strong> Data types or arguments of the functions you want to implement: </strong></div>
-	<div ng-repeat="d in dataTypes" class="data-types" ng-init="d.selectedExample = d.examples[0]">
-		<div bs-collapse-toggle class="toggler" >Data Type: {{d.name}}</div>
-		<div bs-collapse-target class="toggled" ng-init="structure = buildStructure(d)">
-			<span ng-bind="::d.description"></span>
-			<pre ng-if="d.structure" ng-bind="structure"></pre>
+    <div style="text-align: center"><strong> Data types or arguments of the functions you want to implement: </strong>
+    </div>
+    <div ng-repeat="d in dataTypes" class="data-types" ng-init="d.selectedExample = d.examples[0]">
+        <div bs-collapse-toggle class="toggler">Data Type: {{d.name}}</div>
+        <div bs-collapse-target class="toggled" ng-init="structure = buildStructure(d)">
+            <span ng-bind="::d.description"></span>
+            <pre ng-if="d.structure" ng-bind="structure"></pre>
 
-			<div ng-if="d.selectedExample != undefined">
-				<span class="pull-left" for="exampleSelect">EXAMPLES:</span>
-				<span class="pull-right">
-					<div ng-if="::d.examples" class="dropdown"  >
-		               <button name= "exampleSelect" 
-		                       class="btn btn-xs dropdown-toggle"
-		                       bs-select 
-		                       bs-options="e.name for e in d.examples"
-		                       data-html="1" 
-		                       data-placement="bottom-right"
-		                       ng-model="d.selectedExample" >
+            <div ng-if="d.selectedExample != undefined">
+                <span class="pull-left" for="exampleSelect">EXAMPLES:</span>
+                <span class="pull-right">
+					<div ng-if="::d.examples" class="dropdown">
+		               <button name="exampleSelect"
+                               class="btn btn-xs dropdown-toggle"
+                               bs-select
+                               bs-options="e.name for e in d.examples"
+                               data-html="1"
+                               data-placement="bottom-right"
+                               ng-model="d.selectedExample">
 		               </button>
 		            </div>
 				</span>
-					
-	  			<span class="clearfix"></span>
-	            <div json-reader ng-model="d.selectedExample.value" copy-allowed></div>
-			</div>
-	            
-		</div>
-	</div>
-	<div style="text-align: center"><strong>Functions</strong><br/><span>Here’s a list of all functions in the system that are written by the crowd. When you fetch a microtask, the system will pick one of these functions for you to work on. </span></div>
-	<div ng-repeat="f in functions" ng-show="!f.isThirdPartyAPI" class="functions" >
-		<div bs-collapse-toggle class="toggler" >  {{f.name}}</div>
-		<div bs-collapse-target class="toggled">
-			<div ng-bind="f.description"></div>
-			<div><strong> Parameters </strong></div>
-			<div ng-repeat="p in f.parameters">
-				<span ng-bind="p.name"></span>
-				<span ng-bind="p.type"></span>
-			</div>
-			<div >
-				<strong>Return:</strong>
-				<span ng-bind="f.returnType"></span>
-			</div>
-		</div>
-	</div>
 
-	<div style="text-align: center"><strong> 3rd Party persisting API</strong><br/><span>These functions are library functions offered by the environment. You can call them from function implementations as well as from tests. </span></div>
-	<div ng-repeat="f in functions" ng-show="f.isThirdPartyAPI" class="third-party-api">
-		<div bs-collapse-toggle class="toggler" > {{f.name}}Implementation</div>
-		<div bs-collapse-target class="toggled">
-			<div ng-bind="f.description"></div>
-			<div><strong> Parameters </strong></div>
-			<div ng-repeat="p in f.parameters">
-				<span ng-bind="p.name"></span>
-				<span ng-bind="p.type"></span>
-			</div>
-			<div >
-				<strong>Return:</strong>
-				<span ng-bind="f.returnType"></span>
-			</div>
-		</div>
-	</div>
-	<!--<div ng-repeat="f in thirdPartyAPIs" class="functions">-->
-		<!--<div bs-collapse-toggle class="toggler" > Third party API: {{f.name}}</div>-->
-		<!--<div bs-collapse-target class="toggled">-->
-			<!--<div ng-bind="f.description"></div>-->
-			<!--<div><strong> Parameters </strong></div>-->
-			<!--<div ng-repeat="p in f.parameters">-->
-				<!--<span ng-bind="p.name"></span>-->
-				<!--<span ng-bind="p.type"></span>-->
-			<!--</div>-->
-			<!--<div >-->
-				<!--<strong>Return:</strong>-->
-				<!--<span ng-bind="f.returnType"></span>-->
-			<!--</div>-->
-		<!--</div>-->
-	<!--</div>-->
+                <span class="clearfix"></span>
+                <div json-reader ng-model="d.selectedExample.value" copy-allowed></div>
+            </div>
+
+        </div>
+    </div>
+    <div style="text-align: center"><strong>Functions</strong><br/><span>Here’s a list of all functions in the system that are written by the crowd. When you fetch a microtask, the system will pick one of these functions for you to work on. </span>
+    </div>
+    <div ng-repeat="f in functions" ng-show="!f.isThirdPartyAPI" class="functions">
+        <div bs-collapse-toggle class="toggler"> {{f.name}}</div>
+        <div bs-collapse-target class="toggled">
+            <div ng-bind="f.description"></div>
+            <div><strong> Parameters </strong></div>
+            <div ng-repeat="p in f.parameters">
+                <span ng-bind="p.name"></span>
+                <span ng-bind="p.type"></span>
+            </div>
+            <div>
+                <strong>Return:</strong>
+                <span ng-bind="f.returnType"></span>
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align: center"><strong> 3rd Party persisting API</strong><br/><span>These functions are library functions offered by the environment. You can call them from function implementations as well as from tests. </span>
+    </div>
+    <div ng-repeat="f in functions" ng-show="f.isThirdPartyAPI" class="third-party-api">
+        <div bs-collapse-toggle class="toggler"> {{f.name}}Implementation</div>
+        <div bs-collapse-target class="toggled">
+            <div ng-bind="f.description"></div>
+            <div><strong> Parameters </strong></div>
+            <div ng-repeat="p in f.parameters">
+                <span ng-bind="p.name"></span>
+                <span ng-if="p.type =='String' || p.type == 'Number' || p.type =='Boolean' ">
+                  <span ng-bind="p.type"></span>
+                </span>
+                <span ng-if="p.type !='String' && p.type != 'Number' && p.type !='Boolean' ">
+                     <span> One of ADTs</span>
+                </span>
+            </div>
+            <div>
+
+
+                <strong>Return:</strong>
+                <span ng-if="f.name == 'FetchObjects'">
+                                    <span> object [] : an array of JSON objects in the structure of one of the Data Types</span>
+                                </span>
+                <span ng-if="f.name !== 'FetchObjects'">
+                                <span ng-bind="f.returnType"> </span>
+                                </span>
+            </div>
+        </div>
+    </div>
+    <!--<div ng-repeat="f in thirdPartyAPIs" class="functions">-->
+    <!--<div bs-collapse-toggle class="toggler" > Third party API: {{f.name}}</div>-->
+    <!--<div bs-collapse-target class="toggled">-->
+    <!--<div ng-bind="f.description"></div>-->
+    <!--<div><strong> Parameters </strong></div>-->
+    <!--<div ng-repeat="p in f.parameters">-->
+    <!--<span ng-bind="p.name"></span>-->
+    <!--<span ng-bind="p.type"></span>-->
+    <!--</div>-->
+    <!--<div >-->
+    <!--<strong>Return:</strong>-->
+    <!--<span ng-bind="f.returnType"></span>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
 
 </div>

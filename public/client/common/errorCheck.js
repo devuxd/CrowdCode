@@ -20,9 +20,10 @@ function checkForErrors(e)
 //			debugger;
 		    if (e[i] != null)
 		    {
-                                // ignore errors from calling third party APIs, Their names finish with implementation
-                if(e[i].reason.endsWith('Implementation\' is not defined.')){
-                	console.log('enterd',e[i]);
+                // ignore errors from calling third party APIs, Their names finish with implementation
+                if(e[i].reason.endsWith('SaveObjectImplementation is not defined') || e[i].reason.endsWith('FetchObjectsImplementation is not defined')
+                    || e[i].reason.endsWith('DeleteObjectImplementation is not defined') || e[i].reason.endsWith('UpdateObjectImplementation is not defined')){
+                	console.log('checkForErrors e:',e[i]);
                     return "";
                 } else {
                     arrayOfErrors.push("Line " + e[i].line + ": " + e[i].reason);

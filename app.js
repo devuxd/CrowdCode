@@ -6,8 +6,9 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const firebaseConstant = require('firebase');
 const cors = require('cors')({
-  origin: true
+    origin: true
 });
 const status = require('http-status');
 const wagner = require('wagner-core');
@@ -22,67 +23,79 @@ app.set('views', path.join(__dirname, 'public'));
 app.use(logger('dev'));
 app.use(cookieParser());
 app.use(session({
-  name: 'server-session-cookie-id',
-  secret: 'my express secret',
-  saveUninitialized: true,
-  resave: true,
-  store: new FileStore({
-      retries: 10,
-      minTimeout: 100,
-      maxTimeout: 200,
-      path: path.join(__dirname,'sessions')
-  })
+    name: 'server-session-cookie-id',
+    secret: 'my express secret',
+    saveUninitialized: true,
+    resave: true,
+    store: new FileStore({
+        retries: 10,
+        minTimeout: 100,
+        maxTimeout: 200,
+        path: path.join(__dirname, 'sessions')
+    })
 }));
-const isAuth = wagner.invoke(function() {
-  return (req, res, next) => {
-    if(req.session.user || req.path==='/login' || req.path === '/loggedin.html') {
-      req.user = req.session.user;
-      next();
-    } else {
-      res.redirect('/login');
-    }
-  };
+const isAuth = wagner.invoke(function () {
+    return (req, res, next) => {
+        if (req.session.user || req.path === '/login' || req.path === '/loggedin.html') {
+            req.user = req.session.user;
+            next();
+        } else {
+            res.redirect('/login');
+        }
+    };
 });
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-  extended: false
+    extended: false
 }));
-app.post('/authenticate', wagner.invoke(function(UserService, AdminFirebase, FirebaseService) {
-  return function(req, res) {
-    //var idToken = req.body.idToken;
-    var idToken = req.headers['authorization'].split(' ').pop();
-    AdminFirebase.auth().verifyIdToken(idToken)
-      .then(function(decodedToken) {
-        var uid = decodedToken.uid;
-        req.session.user = decodedToken;
-        UserService.getUserById(uid)
-          .then(function(userRecord) {
-            // See the UserRecord reference doc for the contents of userRecord.
-            console.log("Successfully fetched user data:", userRecord.toJSON());
-            var worker_id = userRecord.uid;
-            var worker_name = userRecord.displayName;
-            var avatar_url = userRecord.photoURL;
-            var firebase = FirebaseService;
-            var workers_list_promise = firebase.retrieveWorkersList();
-            workers_list_promise.then(function(workers_list) {
-              if (workers_list.indexOf(worker_id) < 0) {
-                firebase.createWorker(worker_id, worker_name, avatar_url);
-              }
-            }).catch(function(err) {
-                console.trace(err);
-            });
-          })
-          .catch(function(err) {
-            console.log("Error fetching user data:", err);
-          });
-        res.json({
-          'Success': 200
-        })
-      }).catch(function(err) {
-        // Handle error
-        console.trace(err);
-      });
-  };
+app.post('/authenticate', wagner.invoke(function (UserService, AdminFirebase, FirebaseService) {
+    return function (req, res) {
+        //var idToken = req.body.idToken;
+        var idToken = req.headers['authorization'].split(' ').pop();
+        AdminFirebase.auth().verifyIdToken(idToken)
+            .then(function (decodedToken) {
+                var uid = decodedToken.uid;
+                req.session.user = decodedToken;
+                UserService.getUserById(uid)
+                    .then(function (userRecord) {
+                        // See the UserRecord reference doc for the contents of userRecord.
+                        console.log("Successfully fetched user data:", userRecord.toJSON());
+                        var worker_id = userRecord.uid;
+                        var worker_name = userRecord.displayName;
+                        var avatar_url = userRecord.photoURL;
+                        var firebase = FirebaseService;
+                        // logs worker authentication
+                        var ref = AdminFirebase.database().ref().child('Workers').child('logs');
+                        ref.push({
+                            eventType: "LoggedIn",
+                            eventDescription: "Logged in successfully",
+                            timestamp: firebaseConstant.database.ServerValue.TIMESTAMP,
+                            workerId: userRecord.uid,
+                            workerName: userRecord.displayName
+                        }).catch(e => {
+                            console.log(e)
+                        });
+
+                        var workers_list_promise = firebase.retrieveWorkersList();
+                        workers_list_promise.then(function (workers_list) {
+                            if (workers_list.indexOf(worker_id) < 0) {
+                                firebase.createWorker(worker_id, worker_name, avatar_url);
+                            }
+                        }).catch(function (err) {
+                            console.trace(err);
+                        });
+                    })
+                    .catch(function (err) {
+                        console.log("Error fetching user data:", err);
+                    });
+                res.json({
+                    'Success': 200
+                })
+            }).catch(function (err) {
+            // Handle error
+            console.trace(err);
+        });
+    };
 }));
 app.use(cookieParser());
 app.use(isAuth);
@@ -90,21 +103,21 @@ app.use('/api/v1', require('./routes/api')(wagner));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(require('./routes/app-routing')(wagner));
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+app.use(function (req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
 // error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+app.use(function (err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.sendFile(path.join(__dirname, '/public/404.html'));
+    // render the error page
+    res.status(err.status || 500);
+    res.sendFile(path.join(__dirname, '/public/404.html'));
 });
 
 module.exports = app;

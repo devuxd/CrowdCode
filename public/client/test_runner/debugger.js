@@ -46,16 +46,19 @@ Debugger.run = function (testCode, callsLogs) {
         eval(evalCode);
         _testResult.passed = true;
     } catch (e) {
-        console.log('run test result', e);
-        if (e instanceof chai.AssertionError) {
-            _testResult = e;
-        }
+        console.log('run test result, exception:', e);
+        _testResult = e;
         _testResult.passed = false;
-        //ignore throw exception in body of method for cheking valid argument exception
-        if(e instanceof TypeError){
+        // if (e instanceof chai.AssertionError) {
+        //     _testResult.passed = false;
+        // }
+         //ignore throw exception in body of method for checking valid argument exception
+        // else
+            if(e instanceof TypeError){
             console.log('entered chai throw');
             _testResult.passed = true;
         }
+
 
     }
     console.log('test Result: ', _testResult);
@@ -204,14 +207,14 @@ Debugger.mockFunction = function (fNode) {
         callBody += '\n' +
             '  {\n ' +
             ' for(var i=0; i<objTemp.length; i++) {\n' +
-            '         if(objTemp[i].id == todo.id) {\n' +
-            '           return \'Duplicate\';   \n' +
+            '         if(objTemp[i].id === object.id && objTemp[i].adtType === object.adtType) {\n' +
+            '           return false;   \n' +
             '        } \n' +
             '  }\n' +
-            '  objTemp.push(todo);\n' +
-            '  return todo; ' +
+            '  objTemp.push(object);\n' +
+            '  return true; ' +
             '}' + '\n';
-    } else if (name == 'FetchObject') {
+    } /*else if (name == 'FetchObject') {
         callBody += '\n' +
             '  {\n ' +
             '  for(var i=0; i<objTemp.length; i++) {\n' +
@@ -220,15 +223,15 @@ Debugger.mockFunction = function (fNode) {
             '    }' +
             ' return null;' + '\n' +
             '}' + '\n';
-    } else if (name == 'UpdateObject') {
+    }*/ else if (name == 'UpdateObject') {
         callBody += '\n' +
             ' {' +
             '  for(var i=0; i<objTemp.length; i++) {\n' +
-            '        if (objTemp[i].id == todo.id){\n' +
-            '           objTemp[i]=todo; \n' +
-            '            return todo; }\n' +
+            '        if (objTemp[i].id == object.id && objTemp[i].adtType === object.adtType){\n' +
+            '           objTemp[i]=object; \n' +
+            '            return true; }\n' +
             '    }\n' +
-            'return null; \n' +
+            'return false; \n' +
 
             '}' + '\n';
 
@@ -236,19 +239,19 @@ Debugger.mockFunction = function (fNode) {
         callBody += '\n' +
             '{ ' +
             'for(var i=0; i<objTemp.length; i++) {\n ' +
-            '       if (objTemp[i].id == todo.id){\n    ' +
+            '       if (objTemp[i].id == id && objTemp[i].adtType === adtType){\n    ' +
             '            objTemp.splice(i,1); \n         ' +
-            '           return todo; \n     ' +
+            '           return true; \n     ' +
             '        }\n    ' +
             ' }\n   ' +
-            'return null;\n } ';
+            'return false;\n } ';
 
-    } else if (name == 'FetchAllObjects') {
+    } else if (name == 'FetchObjects') {
         callBody += '\n' +
             '{ ' +
             'var resultOFFetchAllObject=[];' +
             'for(var i=0; i<objTemp.length; i++) {\n ' +
-            '       if (objTemp[i].userId == userId){\n    ' +
+            '       if (objTemp[i].adtType == adtType){\n    ' +
             '            resultOFFetchAllObject.push(objTemp[i]); \n ' +
             '        }\n    ' +
             ' }\n   ' +

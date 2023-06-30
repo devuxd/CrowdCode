@@ -1,4 +1,5 @@
 var s = require("underscore.string");
+var firebase = require('firebase');
 
 module.exports = function (AdminFirebase, Q) {
     const now = (unit) => {
@@ -1851,10 +1852,65 @@ module.exports = function (AdminFirebase, Q) {
                 artifactId: artifact_id,
                 eventType: event_type,
                 eventDescription: event_description,
-                timestamp: new Date().toLocaleTimeString("en-us", timeOptions),
-                timeInMicros: now('micro')
+                epochTime: firebase.database.ServerValue.TIMESTAMP,
             };
             var path = 'Projects/' + project_id + '/history/events';
+            var created_child = root_ref.child(path).push(event_schema);
+            return created_child.key;
+        },
+        /* Add an event in the history, it stores log for fetching, submitting review and implementation microtasks
+         param project id text
+         param artifact type text
+         param artifact id text
+         param artifact name text
+         param event type text
+         param event description
+         return event ID text
+         */
+        createLogEvent: function (project_id, event_type, event_description, artifact_type, artifact_id,worker_id, microtask_id,microtask_object,function_object_previous_version) {
+
+            let event_schema = {
+                artifactType: artifact_type,
+                artifactId: artifact_id,
+                eventType: event_type,
+                eventDescription: event_description,
+                     // epochTime:{'.sv': 'timestamp'},
+                epochTime: firebase.database.ServerValue.TIMESTAMP,
+                workerId: worker_id,
+                microtaskId:microtask_id,
+                microtaskObject:microtask_object ? microtask_object:null,
+                functionObjectPreviousVersion: JSON.parse( JSON.stringify(function_object_previous_version ?  function_object_previous_version :null) )
+            };
+            //console.log('logEvent: ',event_schema);
+            var path = 'Projects/' + project_id + '/history/logs';
+            var created_child = root_ref.child(path).push(event_schema);
+            return created_child.key;
+        },
+        /* Add an event in the history, it stores log for fetching, submitting review and implementation microtasks
+         param project id text
+         param artifact type text
+         param artifact id text
+         param artifact name text
+         param event type text
+         param event description
+         return event ID text
+         */
+    createReviewSubmissionLogEvent: function (project_id, event_type, event_description, artifact_type, artifact_id,worker_id, microtask_id,reviewMicrotaskSubmitted,functionAfterSubmission) {
+
+            let event_schema = {
+                artifactType: artifact_type,
+                artifactId: artifact_id,
+                eventType: event_type,
+                eventDescription: event_description,
+                // epochTime:{'.sv': 'timestamp'},
+                epochTime: firebase.database.ServerValue.TIMESTAMP,
+                workerId: worker_id,
+                microtaskId:microtask_id,
+                reviewMicrotaskSubmitted:reviewMicrotaskSubmitted ? reviewMicrotaskSubmitted:null,
+                functionAfterSubmission:JSON.parse( JSON.stringify(functionAfterSubmission ? functionAfterSubmission: null) )
+            };
+            //console.log('logEvent: ',event_schema);
+            var path = 'Projects/' + project_id + '/history/logs';
             var created_child = root_ref.child(path).push(event_schema);
             return created_child.key;
         },
@@ -1875,7 +1931,8 @@ module.exports = function (AdminFirebase, Q) {
                 type: type,
                 data: data,
                 timestamp: new Date().toLocaleTimeString("en-us", timeOptions),
-                created_time: now('micro')
+                created_time: now('micro'),
+                epochTime:firebase.database.ServerValue.TIMESTAMP
             }
             var path = 'Projects/' + project_id + '/notifications';
             var created_child = root_ref.child(path).child(worker_id).push(notification_schema);
