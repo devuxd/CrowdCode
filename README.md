@@ -6,11 +6,13 @@ Demo of Crowd Microservices environment
 
 [![Watch the video](https://github.com/devuxd/CrowdCode/blob/Emad/public/img/CM_demo.png)](https://www.youtube.com/watch?v=qQeYOsRaxHc)
 
-Crowd Microservices follows client-server architecture with three layers: 1) a web client, implemented in AngularJS, which runs on a worker's browser, 2) a backend, implemented in Node.js, and 3) a persistence store, implemented using Firebase Real-time Database. 
+
+Crowd Microservices follows client-server architecture with three layers: 1) a web client, implemented in AngularJS, which runs on a worker's browser, 2) a back-end, implemented in Node.js, and 3) a persistence store, implemented using Firebase Real-time Database. 
 
 ## Running Crowd Microservices on the local machine
-1. install Node.js
-2. Run `node ./bin/www` in terminal 
-3. In the Chrome go to this URL `HTTP://localhost:3000/{_project_name_}`
-4. For adding a new project, CrowdCode has admin dashboard. It is accessible via `http://localhost:3000/clientRequest`
-5. For deploying completed microservices on another repository which is connected to Heroku should configure GitHub username and password in _deployment_service.js_ file. After updating information and re-run Node.js it is accessible via URL: `HTTP://localhost:3000/{_project_name_}/deploy`!
+1. Install [Node.js](https://nodejs.org/en/download/) for your platform
+2. Run `npm install express` to install the [express framework](https://expressjs.com)
+3. Run `node ./bin/www` or `npm start` in terminal 
+4. In Google Chrome go to this URL `http://localhost:3000/{_project_name_}`
+5. For adding a new project, Crowd Microservices has admin dashboard. It is accessible via `http://localhost:3000/clientRequest`
+6. For deploying completed microservices on another repository which is connected to Heroku, configure GitHub username and password in `./util/deployment_service.js` file. After updating the information, re-run Node.js and access it via URL: `HTTP://localhost:3000/{_project_name_}/deploy`!
