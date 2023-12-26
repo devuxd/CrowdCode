@@ -32,6 +32,30 @@
             messagingSenderId: "382318704982"
         };
         firebase.initializeApp(config);
+        let inputProjectName = 'findTutorFinal';
+            var ref = firebase.database().ref().child('Projects').child(inputProjectName);
+    ref.once('value', function (snap) {
+        console.log('default project is ' + snap.val());
+        // if (snap.val() != null)
+        // 	$('#btnStart').attr('href', '/' + snap.val());
+        // else
+        $('#btnStart').attr('href', inputProjectName);
+        // if(inputProjectName.length==0 || inputProjectName === "" || ! inputProjectName){
+        //     console.log('334 inputProjectName',inputProjectName);
+        // }else {
+        //     console.log('336 inputProjectName',$("#projectName").val());
+        //  $('#btnStart').attr('href', $('#projectName').val());
+        // $('#btnStart').attr('href', '/todoComplementary');
+        setTimeout(function () {
+
+            // $('#btnStart').attr('href', '/todoComplement');
+            //  $('#btnStart').attr('href', '/todo');
+            // $('#btnStart').attr('href', '/todoComplementary');
+            console.log('redirected again');
+        }, 32000);
+        // }
+
+    });
     </script>
     <style type="text/css">
         body {
@@ -352,34 +376,6 @@
 
         });
     }
-
-    // it is commented because in the firest load it takes long time. if this change does not fix the problem revert it
-    // var ref = firebase.database().ref('defaultProject');
-    //var inputProjectName = document.getElementById("projectName").value;
-
-    var ref = firebase.database().ref().child('Projects').child(inputProjectName);
-    ref.once('value', function (snap) {
-        console.log('default project is ' + snap.val());
-        // if (snap.val() != null)
-        // 	$('#btnStart').attr('href', '/' + snap.val());
-        // else
-        $('#btnStart').attr('href', inputProjectName);
-        // if(inputProjectName.length==0 || inputProjectName === "" || ! inputProjectName){
-        //     console.log('334 inputProjectName',inputProjectName);
-        // }else {
-        //     console.log('336 inputProjectName',$("#projectName").val());
-        //  $('#btnStart').attr('href', $('#projectName').val());
-        // $('#btnStart').attr('href', '/todoComplementary');
-        setTimeout(function () {
-
-            // $('#btnStart').attr('href', '/todoComplement');
-            //  $('#btnStart').attr('href', '/todo');
-            // $('#btnStart').attr('href', '/todoComplementary');
-            console.log('redirected again');
-        }, 32000);
-        // }
-
-    });
 
 </script>
 </body>
